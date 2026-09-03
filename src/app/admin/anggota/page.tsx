@@ -6,11 +6,14 @@ import { AdminLayout } from "@/components/AdminLayout";
 import { useOskar } from "@/lib/data-store";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { Member } from "@/lib/types";
-import { Plus, Edit2, Trash2, Search, Upload, X, ShieldCheck } from "lucide-react";
+import { Plus, Edit2, Trash2, Search, Filter, Upload, X, ShieldCheck } from "lucide-react";
 
 export default function AdminAnggotaPage() {
   const { members, addMember, updateMember, deleteMember } = useOskar();
   const [searchTerm, setSearchTerm] = useState("");
+  const [filterGender, setFilterGender] = useState("ALL");
+  const [filterRt, setFilterRt] = useState("ALL");
+
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<Member | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Member | null>(null);
@@ -30,9 +33,13 @@ export default function AdminAnggotaPage() {
 
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
-  const filteredMembers = members.filter((m) =>
-    m.fullName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Reactive filtering by Name search, Gender filter, and RT filter
+  const filteredMembers = members.filter((m) => {
+    const matchesSearch = m.fullName.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesGender = filterGender === "ALL" || (m.gender || "Laki-laki") === filterGender;
+    const matchesRt = filterRt === "ALL" || m.rt === filterRt;
+    return matchesSearch && matchesGender && matchesRt;
+  });
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -141,7 +148,7 @@ export default function AdminAnggotaPage() {
           <div>
             <h1 className="text-2xl font-black text-oskar-dark">Kelola Data Anggota</h1>
             <p className="text-xs font-medium text-slate-600">
-              Tambah, edit jabatan/BPH, ganti foto (foto lama otomatis dibersihkan), atau hapus anggota.
+              Tambah, edit jabatan/BPH, ganti foto, serta filter data berdasarkan Gender dan RT.
             </p>
           </div>
 
@@ -154,20 +161,61 @@ export default function AdminAnggotaPage() {
           </button>
         </div>
 
-        {/* SEARCH BAR */}
-        <div className="neo-card p-4 bg-white border-2 border-oskar-dark flex items-center gap-3">
-          <Search className="w-5 h-5 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Cari anggota berdasarkan nama..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="neo-input text-xs sm:text-sm"
-          />
+        {/* SEARCH & FILTER BAR (GENDER & RT) */}
+        <div className="neo-card p-4 bg-white border-2 border-oskar-dark flex flex-col md:flex-row items-center gap-4">
+          {/* Search Input */}
+          <div className="relative flex-1 w-full">
+            <Search className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Cari anggota berdasarkan nama..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="neo-input pl-11 text-xs sm:text-sm"
+            />
+          </div>
+
+          {/* Filter Group */}
+          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+            {/* Filter Gender */}
+            <div className="flex items-center gap-1.5 bg-amber-50 px-3 py-1.5 rounded-xl border border-oskar-dark">
+              <Filter className="w-4 h-4 text-oskar-dark" />
+              <label className="text-xs font-black text-oskar-dark uppercase">Gender:</label>
+              <select
+                value={filterGender}
+                onChange={(e) => setFilterGender(e.target.value)}
+                className="bg-transparent text-xs font-bold text-slate-800 cursor-pointer focus:outline-none"
+              >
+                <option value="ALL">Semua Gender</option>
+                <option value="Laki-laki">Laki-laki</option>
+                <option value="Perempuan">Perempuan</option>
+              </select>
+            </div>
+
+            {/* Filter RT */}
+            <div className="flex items-center gap-1.5 bg-amber-50 px-3 py-1.5 rounded-xl border border-oskar-dark">
+              <Filter className="w-4 h-4 text-oskar-dark" />
+              <label className="text-xs font-black text-oskar-dark uppercase">RT:</label>
+              <select
+                value={filterRt}
+                onChange={(e) => setFilterRt(e.target.value)}
+                className="bg-transparent text-xs font-bold text-slate-800 cursor-pointer focus:outline-none"
+              >
+                <option value="ALL">Semua RT</option>
+                <option value="RT 1">RT 1</option>
+                <option value="RT 2">RT 2</option>
+                <option value="RT 3">RT 3</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         {/* MEMBERS TABLE */}
         <div className="neo-card p-6 bg-white border-2 border-oskar-dark space-y-4">
+          <div className="flex items-center justify-between text-xs font-bold text-slate-600">
+            <span>Menampilkan {filteredMembers.length} dari total {members.length} anggota</span>
+          </div>
+
           <div className="overflow-x-auto border-2 border-oskar-dark rounded-xl">
             <table className="w-full text-left text-xs sm:text-sm">
               <thead className="bg-amber-100 border-b-2 border-oskar-dark text-oskar-dark font-black">
@@ -256,11 +304,6 @@ export default function AdminAnggotaPage() {
                     <span>{editingMember ? "Ganti Foto Anggota" : "Upload Foto Profil"}</span>
                     <input type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" />
                   </label>
-                  {editingMember && (
-                    <p className="text-[10px] text-slate-500 text-center">
-                      *Foto lama otomatis dibersihkan dari storage setelah foto baru berhasil disimpan.
-                    </p>
-                  )}
                 </div>
 
                 <div className="space-y-1">
@@ -338,7 +381,7 @@ export default function AdminAnggotaPage() {
                   />
                 </div>
 
-                {/* JABATAN BPH DROPDOWN (revisi.pdf page 6) */}
+                {/* JABATAN BPH DROPDOWN */}
                 <div className="space-y-1">
                   <label className="text-xs font-black text-oskar-dark uppercase">Pilihan Jabatan</label>
                   <select

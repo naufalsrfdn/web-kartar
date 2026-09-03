@@ -4,36 +4,39 @@ import { OskarProvider } from "@/lib/data-store";
 import { ToastContainer } from "@/components/ToastContainer";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://oskar-krekah.org"),
+  metadataBase: new URL("https://oskar.my.id"),
   title: {
-    default: "OSKAR - Organisasi Pemuda Krekah Utara",
+    default: "OSKAR - Organisasi Pemuda Pemudi Krekah Utara",
     template: "%s | OSKAR Krekah Utara",
   },
   description:
-    "Website Resmi Organisasi Pemuda Krekah Utara (OSKAR). Wadah kegiatan, pendaftaran anggota, keanggotaan, katalog UMKM dusun, dan transparansi keuangan.",
+    "Website Resmi Organisasi Pemuda Pemudi Krekah Utara (OSKAR). Wadah kegiatan, pendaftaran online, keanggotaan, dan katalog UMKM dusun.",
   keywords: [
     "OSKAR",
     "Krekah Utara",
-    "Organisasi Pemuda",
-    "Karang Taruna Dusun",
-    "Pemuda Pemudi",
-    "Sleman",
+    "Organisasi Pemuda Pemudi Krekah Utara",
+    "Pemuda Krekah",
+    "Bantul",
+    "Gilangharjo",
+    "Pandak",
     "UMKM Krekah",
     "Kegiatan Dusun",
+    "kartar",
+    "Karang Taruna",
   ],
-  authors: [{ name: "Pengurus OSKAR" }],
+  authors: [{ name: "OSKAR Krekah Utara" }],
   openGraph: {
-    title: "OSKAR - Organisasi Pemuda Krekah Utara",
+    title: "OSKAR - Organisasi Pemuda Pemudi Krekah Utara",
     description:
-      "Wadah kreasi, kegiatan kepemudaan, direktori UMKM warga, dan pendaftaran anggota OSKAR Dusun Krekah Utara.",
-    url: "https://oskar-krekah.org",
+      "Wadah kreasi, kegiatan kepemudaan, direktori UMKM warga, dan pendaftaran online Organisasi Pemuda Pemudi Krekah Utara.",
+    url: "https://oskar.my.id",
     siteName: "OSKAR Krekah Utara",
     images: [
       {
         url: "/logo.png",
         width: 800,
         height: 800,
-        alt: "Logo OSKAR Organisasi Pemuda Krekah Utara",
+        alt: "Logo OSKAR Organisasi Pemuda Pemudi Krekah Utara",
       },
     ],
     locale: "id_ID",

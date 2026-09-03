@@ -12,7 +12,6 @@ import {
   ShoppingBag,
   Calendar,
   Newspaper,
-  Briefcase,
   Settings,
   LogOut,
   Menu,
@@ -41,7 +40,6 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     { href: "/admin/umkm", label: "Katalog UMKM", icon: ShoppingBag },
     { href: "/admin/kegiatan", label: "Kelola Kegiatan", icon: Calendar },
     { href: "/admin/berita", label: "Kelola Berita", icon: Newspaper },
-    { href: "/admin/program-kerja", label: "Program Kerja", icon: Briefcase },
     { href: "/admin/pengaturan", label: "Pengaturan Sistem", icon: Settings },
   ];
 

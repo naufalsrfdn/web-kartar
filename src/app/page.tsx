@@ -9,7 +9,6 @@ import { useOskar } from "@/lib/data-store";
 import {
   Users,
   Calendar,
-  Briefcase,
   ShoppingBag,
   ArrowRight,
   ExternalLink,
@@ -21,12 +20,11 @@ import {
 import { formatDate, createWhatsAppLink } from "@/lib/utils";
 
 export default function HomePage() {
-  const { members, events, news, programs, umkm, settings } = useOskar();
+  const { members, events, news, umkm, settings } = useOskar();
 
   const approvedMembers = members.filter((m) => m.isApproved);
   const totalMembers = approvedMembers.length;
   const totalEvents = events.length;
-  const totalPrograms = programs.length;
   const totalUmkm = umkm.length;
 
   const upcomingEvent = events[0];
@@ -108,51 +106,39 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ORGANIZATIONAL STATS (4 CARDS - KAS REMOVED PER USER REQUEST) */}
+        {/* ORGANIZATIONAL STATS (3 CLEAN STAT CARDS) */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            <div className="neo-card p-5 bg-amber-50 border-2 border-oskar-dark flex items-center gap-4">
-              <div className="p-3 bg-oskar-yellow border-2 border-oskar-dark rounded-xl shadow-neo-sm shrink-0">
-                <Users className="w-6 h-6 text-oskar-dark" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="neo-card p-6 bg-amber-50 border-2 border-oskar-dark flex items-center gap-4">
+              <div className="p-3.5 bg-oskar-yellow border-2 border-oskar-dark rounded-xl shadow-neo-sm shrink-0">
+                <Users className="w-7 h-7 text-oskar-dark" />
               </div>
               <div>
-                <span className="text-2xl sm:text-3xl font-black text-oskar-dark block">
+                <span className="text-3xl font-black text-oskar-dark block">
                   {totalMembers}
                 </span>
                 <span className="text-xs font-bold text-slate-600">Anggota Aktif</span>
               </div>
             </div>
 
-            <div className="neo-card p-5 bg-orange-50 border-2 border-oskar-dark flex items-center gap-4">
-              <div className="p-3 bg-oskar-orange border-2 border-oskar-dark rounded-xl text-white shadow-neo-sm shrink-0">
-                <Calendar className="w-6 h-6" />
+            <div className="neo-card p-6 bg-orange-50 border-2 border-oskar-dark flex items-center gap-4">
+              <div className="p-3.5 bg-oskar-orange border-2 border-oskar-dark rounded-xl text-white shadow-neo-sm shrink-0">
+                <Calendar className="w-7 h-7" />
               </div>
               <div>
-                <span className="text-2xl sm:text-3xl font-black text-oskar-dark block">
+                <span className="text-3xl font-black text-oskar-dark block">
                   {totalEvents}
                 </span>
                 <span className="text-xs font-bold text-slate-600">Kegiatan Dusun</span>
               </div>
             </div>
 
-            <div className="neo-card p-5 bg-rose-50 border-2 border-oskar-dark flex items-center gap-4">
-              <div className="p-3 bg-oskar-red border-2 border-oskar-dark text-white rounded-xl shadow-neo-sm shrink-0">
-                <Briefcase className="w-6 h-6" />
+            <div className="neo-card p-6 bg-emerald-50 border-2 border-oskar-dark flex items-center gap-4">
+              <div className="p-3.5 bg-emerald-400 border-2 border-oskar-dark text-oskar-dark rounded-xl shadow-neo-sm shrink-0">
+                <ShoppingBag className="w-7 h-7" />
               </div>
               <div>
-                <span className="text-2xl sm:text-3xl font-black text-oskar-dark block">
-                  {totalPrograms}
-                </span>
-                <span className="text-xs font-bold text-slate-600">Program Kerja</span>
-              </div>
-            </div>
-
-            <div className="neo-card p-5 bg-emerald-50 border-2 border-oskar-dark flex items-center gap-4">
-              <div className="p-3 bg-emerald-400 border-2 border-oskar-dark text-oskar-dark rounded-xl shadow-neo-sm shrink-0">
-                <ShoppingBag className="w-6 h-6" />
-              </div>
-              <div>
-                <span className="text-2xl sm:text-3xl font-black text-oskar-dark block">
+                <span className="text-3xl font-black text-oskar-dark block">
                   {totalUmkm}
                 </span>
                 <span className="text-xs font-bold text-slate-600">UMKM Dusun</span>

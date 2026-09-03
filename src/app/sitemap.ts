@@ -1,19 +1,16 @@
 import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://oskar-krekah.org";
+  const baseUrl = "https://oskar.my.id";
 
   const routes = [
     "",
     "/tentang",
-    "/pengurus",
     "/anggota",
     "/pendaftaran",
     "/umkm",
     "/kegiatan",
     "/berita",
-    "/program-kerja",
-    "/keuangan",
     "/kontak",
   ];
 
