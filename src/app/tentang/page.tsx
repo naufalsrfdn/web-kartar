@@ -66,15 +66,15 @@ export default function TentangPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="p-4 bg-slate-50 border-2 border-oskar-dark rounded-xl text-center">
               <h3 className="text-lg font-black text-oskar-dark">RT 1 Krekah Utara</h3>
-              <p className="text-xs font-medium text-slate-500 mt-1">Wilayah Krekah Utara Bagian Barat</p>
-            </div>
-            <div className="p-4 bg-slate-50 border-2 border-oskar-dark rounded-xl text-center">
-              <h3 className="text-lg font-black text-oskar-dark">RT 2 Krekah Utara</h3>
               <p className="text-xs font-medium text-slate-500 mt-1">Wilayah Krekah Utara Bagian Tengah</p>
             </div>
             <div className="p-4 bg-slate-50 border-2 border-oskar-dark rounded-xl text-center">
-              <h3 className="text-lg font-black text-oskar-dark">RT 3 Krekah Utara</h3>
+              <h3 className="text-lg font-black text-oskar-dark">RT 2 Krekah Utara</h3>
               <p className="text-xs font-medium text-slate-500 mt-1">Wilayah Krekah Utara Bagian Timur</p>
+            </div>
+            <div className="p-4 bg-slate-50 border-2 border-oskar-dark rounded-xl text-center">
+              <h3 className="text-lg font-black text-oskar-dark">RT 3 Krekah Utara</h3>
+              <p className="text-xs font-medium text-slate-500 mt-1">Wilayah Krekah Utara Bagian Barat</p>
             </div>
           </div>
         </div>
