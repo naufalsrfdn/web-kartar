@@ -5,12 +5,19 @@ import Link from "next/link";
 import Image from "next/image";
 import { MapPin, Phone, Instagram, ShieldCheck } from "lucide-react";
 import { createWhatsAppLink } from "@/lib/utils";
+import { useOskar } from "@/lib/data-store";
 
 export const Footer: React.FC = () => {
-  const waNumber = "083843418369";
-  const address = "Krekah, Gilangharjo, Pandak, Bantul, Yogyakarta";
-  const igHandle = "@oskar.krekahutara";
-  const tiktokHandle = "@krekahutara";
+  const { settings } = useOskar();
+
+  const waNumber = settings.whatsappNumber || "083843418369";
+  const address = settings.secretariatAddress || "Krekah, Gilangharjo, Pandak, Bantul, Yogyakarta";
+  const igHandle = settings.instagramHandle || "@oskar.krekahutara";
+  const tiktokHandle = settings.tiktokHandle || "@krekahutara";
+
+  // Format IG URL without @
+  const igClean = igHandle.replace("@", "");
+  const tiktokClean = tiktokHandle.replace("@", "");
 
   const waLink = createWhatsAppLink(
     waNumber,
@@ -74,7 +81,7 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Kontak Sekretariat */}
+          {/* DYNAMIC KONTAK SEKRETARIAT */}
           <div className="space-y-3">
             <h3 className="text-lg font-black text-oskar-yellow border-b-2 border-slate-700 pb-2 inline-block">
               Kontak Sekretariat
@@ -93,7 +100,7 @@ export const Footer: React.FC = () => {
               <div className="flex items-center gap-2.5">
                 <Instagram className="w-5 h-5 text-pink-400 shrink-0" />
                 <a
-                  href="https://instagram.com/oskar.krekahutara"
+                  href={`https://instagram.com/${igClean}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-white underline"
@@ -104,7 +111,7 @@ export const Footer: React.FC = () => {
               <div className="flex items-center gap-2.5">
                 <span className="w-5 text-center font-bold text-slate-400 text-xs shrink-0">TT</span>
                 <a
-                  href="https://tiktok.com/@krekahutara"
+                  href={`https://tiktok.com/@${tiktokClean}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-white underline"
@@ -121,7 +128,7 @@ export const Footer: React.FC = () => {
               Akses Pengurus
             </h3>
             <p className="text-xs text-slate-400 font-medium">
-              Portal pengelolaan anggota, approve pendaftaran, dan update transparansi dusun.
+              Portal pengelolaan anggota, approve pendaftaran online, dan kelola kegiatan dusun.
             </p>
             <Link
               href="/admin/login"

@@ -135,22 +135,6 @@ export const initialLeadership: Leadership[] = [
     whatsapp: "081987654321",
     orderIndex: 2,
   },
-  {
-    id: "lead-3",
-    name: "Rian Kurniawan",
-    roleTitle: "Sekretaris",
-    photoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
-    whatsapp: "085712349876",
-    orderIndex: 3,
-  },
-  {
-    id: "lead-4",
-    name: "Dewi Lestari",
-    roleTitle: "Bendahara",
-    photoUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&q=80",
-    whatsapp: "088212345678",
-    orderIndex: 4,
-  },
 ];
 
 export const initialUmkm: UmkmItem[] = [
@@ -214,18 +198,6 @@ export const initialEvents: EventItem[] = [
     ],
     gdriveUrl: "https://drive.google.com/drive/folders/oskar-voli-2026",
   },
-  {
-    id: "e-3",
-    title: "Kerja Bakti Masal Clean Up Sungai & Saluran Dusun",
-    date: "2026-07-28",
-    location: "Area Saluran Irigasi Krekah Utara",
-    description: "Aksi hijau pemuda OSKAR membersihkan sampah dan memperlancar aliran irigasi persawahan warga.",
-    category: "Kerja Bakti",
-    previewPhotos: [
-      "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&q=80"
-    ],
-    gdriveUrl: "https://drive.google.com/drive/folders/oskar-kerjabakti-2026",
-  },
 ];
 
 export const initialNews: NewsItem[] = [
@@ -234,7 +206,7 @@ export const initialNews: NewsItem[] = [
     title: "Sukses Gelar Turnamen Voli HUT RI, Pemuda Krekah Utara Pererat Silaturahmi Antar RT",
     slug: "sukses-gelar-turnamen-voli-hut-ri",
     thumbnail: "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=600&q=80",
-    content: "Kemeriahan peringatan HUT RI di Dusun Krekah Utara mencapai puncaknya pada final Turnamen Voli Antar RT. Tim RT 2 berhasil menyabet juara pertama setelah pertandingan sengit tiga set melawan RT 1. Ketua OSKAR, Ahmad Bagus Prasetyo, menyampaikan rasa bangga atas antusiasme seluruh pemuda dan warga yang hadir mendukung.",
+    content: "Kemeriahan peringatan HUT RI di Dusun Krekah Utara mencapai puncaknya pada final Turnamen Voli Antar RT. Tim RT 2 berhasil menyabet juara pertama setelah pertandingan sengit tiga set melawan RT 1.",
     date: "2026-08-18",
     category: "Kegiatan",
   },
@@ -243,62 +215,15 @@ export const initialNews: NewsItem[] = [
     title: "OSKAR Luncurkan Direktori UMKM Dusun untuk Bangkitkan Ekonomi Pemuda",
     slug: "oskar-luncurkan-direktori-umkm-dusun",
     thumbnail: "https://images.unsplash.com/photo-1555244162-803834f70033?w=600&q=80",
-    content: "Sebagai bentuk dukungan nyata terhadap wirausaha muda di Dusun Krekah Utara, OSKAR resmi meluncurkan halaman Katalog UMKM digital di website resmi. Melalui katalog ini, warga dan pembeli luar dusun dapat langsung menghubungi pembuat produk via WhatsApp tanpa perantara.",
+    content: "Sebagai bentuk dukungan nyata terhadap wirausaha muda di Dusun Krekah Utara, OSKAR resmi meluncurkan halaman Katalog UMKM digital di website resmi.",
     date: "2026-09-02",
     category: "Pengumuman",
   },
 ];
 
-export const initialPrograms: ProgramItem[] = [
-  {
-    id: "p-1",
-    title: "Gerakan Krekah Hijau & Bank Sampah Pemuda",
-    description: "Pengelolaan sampah anorganik terpilah dan pemanfaatan lahan kosong dusun untuk apotek hidup.",
-    category: "Lingkungan",
-    year: 2026,
-    target: "Setiap RT memiliki titik kumpul pemilahan sampah",
-    status: "ONGOING",
-  },
-  {
-    id: "p-2",
-    title: "Pemberdayaan UMKM Pemuda Digital",
-    description: "Pelatihan promosi online, branding produk, dan penyediaan katalog usaha warga dusun.",
-    category: "Kewirausahaan",
-    year: 2026,
-    target: " minimal 15 UMKM terdaftar dan berpromosi online",
-    status: "ONGOING",
-  },
-];
+export const initialPrograms: ProgramItem[] = [];
 
-export const initialTransactions: FinancialTransaction[] = [
-  {
-    id: "t-1",
-    title: "Kas Masuk Iuran Bulanan Anggota (Agustus)",
-    amount: 750000,
-    type: "INCOME",
-    category: "Iuran Anggota",
-    date: "2026-08-05",
-    note: "Iuran rutin dari anggota OSKAR",
-  },
-  {
-    id: "t-2",
-    title: "Sponsorship & Bantuan Kas Dusun HUT RI",
-    amount: 2500000,
-    type: "INCOME",
-    category: "Donasi / Sponsor",
-    date: "2026-08-10",
-    note: "Dukungan dari Kas Dusun & Tokoh Warga",
-  },
-  {
-    id: "t-3",
-    title: "Pembelian Bola Voli & Net Baru",
-    amount: 650000,
-    type: "EXPENSE",
-    category: "Perlengkapan",
-    date: "2026-08-12",
-    note: "2 bola Mikasa & 1 net profesional",
-  },
-];
+export const initialTransactions: FinancialTransaction[] = [];
 
 export const initialSettings: SystemSettings = {
   registrationOpen: true,
@@ -306,6 +231,6 @@ export const initialSettings: SystemSettings = {
   whatsappNumber: "083843418369",
   instagramHandle: "@oskar.krekahutara",
   tiktokHandle: "@krekahutara",
-  mapsEmbedUrl: "https://maps.app.goo.gl/XXoM8dnfzE9CZJHEA",
+  mapsEmbedUrl: "https://maps.app.goo.gl/NQf28uz7fPRK9fn67",
   heroNotice: "Pendaftaran anggota baru OSKAR periode 2026 resmi DIBUKA! Mari berkontribusi untuk dusun kita.",
 };

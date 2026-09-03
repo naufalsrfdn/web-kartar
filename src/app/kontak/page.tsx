@@ -8,20 +8,29 @@ import { MapPin, Phone, Instagram, Send, Mail, CheckCircle2, ExternalLink } from
 import { createWhatsAppLink } from "@/lib/utils";
 
 export default function KontakPage() {
-  const { showToast } = useOskar();
+  const { settings, showToast } = useOskar();
   const [formState, setFormState] = useState({ name: "", contact: "", message: "" });
   const [sent, setSent] = useState(false);
 
-  const address = "Krekah, Gilangharjo, Pandak, Bantul, Yogyakarta";
-  const waNumber = "083843418369";
-  const igHandle = "@oskar.krekahutara";
-  const tiktokHandle = "@krekahutara";
-  const mapsUrl = "https://maps.app.goo.gl/XXoM8dnfzE9CZJHEA";
+  // Dynamic values from Admin Settings!
+  const address = settings.secretariatAddress || "Krekah, Gilangharjo, Pandak, Bantul, Yogyakarta";
+  const waNumber = settings.whatsappNumber || "083843418369";
+  const igHandle = settings.instagramHandle || "@oskar.krekahutara";
+  const tiktokHandle = settings.tiktokHandle || "@krekahutara";
+  const mapsUrl = settings.mapsEmbedUrl || "https://maps.app.goo.gl/NQf28uz7fPRK9fn67";
+
+  const igClean = igHandle.replace("@", "");
+  const tiktokClean = tiktokHandle.replace("@", "");
 
   const waLink = createWhatsAppLink(
     waNumber,
     "Halo Admin OSKAR Krekah Utara, saya ingin berkomunikasi seputar kegiatan organisasi."
   );
+
+  // Google Maps Iframe Embed URL based on Secretariat Address
+  const iframeEmbedSrc = `https://maps.google.com/maps?q=${encodeURIComponent(
+    address
+  )}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,13 +57,13 @@ export default function KontakPage() {
           </p>
         </div>
 
-        {/* MAIN CONTENT GRID (EQUAL ALIGNED HEIGHT) */}
+        {/* MAIN CONTENT GRID */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-          {/* CONTACT INFO & MAPS (LEFT SIDE) */}
-          <div className="lg:col-span-5 flex flex-col gap-6">
-            <div className="neo-card p-6 bg-white border-2 border-oskar-dark space-y-5 flex-1">
+          {/* CONTACT INFO & GOOGLE MAPS EMBED (LEFT SIDE) */}
+          <div className="lg:col-span-6 flex flex-col gap-6">
+            <div className="neo-card p-6 bg-white border-2 border-oskar-dark space-y-5">
               <h2 className="text-xl font-black text-oskar-dark border-b-2 border-slate-100 pb-3">
-                Informasi Kontak
+                Informasi Kontak Sekretariat
               </h2>
 
               <div className="space-y-4 text-sm font-medium">
@@ -92,7 +101,7 @@ export default function KontakPage() {
                   <div>
                     <h3 className="font-black text-oskar-dark">Instagram Resmi</h3>
                     <a
-                      href="https://instagram.com/oskar.krekahutara"
+                      href={`https://instagram.com/${igClean}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-xs font-bold text-pink-700 underline block mt-0.5"
@@ -109,7 +118,7 @@ export default function KontakPage() {
                   <div>
                     <h3 className="font-black text-oskar-dark">TikTok Resmi</h3>
                     <a
-                      href="https://tiktok.com/@krekahutara"
+                      href={`https://tiktok.com/@${tiktokClean}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-xs font-bold text-slate-800 underline block mt-0.5"
@@ -121,42 +130,52 @@ export default function KontakPage() {
               </div>
             </div>
 
-            {/* MAP CARD WITH DIRECT GOOGLE MAPS LINK */}
-            <div className="neo-card p-5 bg-amber-50 border-2 border-oskar-dark space-y-3">
-              <h3 className="text-sm font-black text-oskar-dark flex items-center justify-between">
-                <span className="flex items-center gap-2">
+            {/* REAL GOOGLE MAPS EMBED IFRAME */}
+            <div className="neo-card p-5 bg-amber-50 border-2 border-oskar-dark space-y-3 flex-1 flex flex-col justify-between">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-black text-oskar-dark flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-oskar-red" />
                   Peta Lokasi Dusun Krekah Utara
-                </span>
+                </h3>
                 <a
                   href={mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs font-bold text-oskar-red hover:underline flex items-center gap-1"
                 >
-                  <span>Buka Maps</span>
+                  <span>Buka Maps App</span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
-              </h3>
-              <div className="p-4 bg-white rounded-xl border-2 border-oskar-dark text-center space-y-2">
-                <p className="text-xs font-medium text-slate-600">
-                  Dusun Krekah, Kelurahan Gilangharjo, Kapanewon Pandak, Kabupaten Bantul, D.I. Yogyakarta
-                </p>
+              </div>
+
+              {/* IFRAME EMBED */}
+              <div className="relative w-full h-64 sm:h-72 rounded-xl overflow-hidden border-2 border-oskar-dark bg-slate-200 shadow-neo-sm">
+                <iframe
+                  title="Google Maps Embed Krekah Utara"
+                  src={iframeEmbedSrc}
+                  className="w-full h-full border-0"
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+
+              <div className="pt-1 text-center">
                 <a
                   href={mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="neo-btn neo-btn-primary text-xs py-2 px-4 inline-flex items-center gap-2"
+                  className="neo-btn neo-btn-primary text-xs py-2.5 px-5 w-full flex items-center justify-center gap-2"
                 >
-                  <span>Lihat di Google Maps App</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>Buka di Google Maps App (https://maps.app.goo.gl/NQf28uz7fPRK9fn67)</span>
+                  <ExternalLink className="w-4 h-4" />
                 </a>
               </div>
             </div>
           </div>
 
-          {/* SEND MESSAGE FORM (RIGHT SIDE - EQUAL ALIGNED HEIGHT) */}
-          <div className="lg:col-span-7 flex flex-col">
+          {/* SEND MESSAGE FORM (RIGHT SIDE) */}
+          <div className="lg:col-span-6 flex flex-col">
             <div className="neo-card p-6 sm:p-8 bg-white border-2 border-oskar-dark space-y-6 flex-1 flex flex-col justify-between">
               <div className="space-y-6">
                 <h2 className="text-xl font-black text-oskar-dark border-b-2 border-slate-100 pb-3">
