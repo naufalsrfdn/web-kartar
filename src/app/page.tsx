@@ -10,7 +10,6 @@ import {
   Users,
   Calendar,
   Briefcase,
-  Wallet,
   ShoppingBag,
   ArrowRight,
   ExternalLink,
@@ -19,24 +18,16 @@ import {
   UserPlus,
   MessageCircle,
 } from "lucide-react";
-import { formatDate, formatRupiah, createWhatsAppLink } from "@/lib/utils";
+import { formatDate, createWhatsAppLink } from "@/lib/utils";
 
 export default function HomePage() {
-  const { members, events, news, programs, umkm, transactions, settings } = useOskar();
+  const { members, events, news, programs, umkm, settings } = useOskar();
 
   const approvedMembers = members.filter((m) => m.isApproved);
   const totalMembers = approvedMembers.length;
   const totalEvents = events.length;
   const totalPrograms = programs.length;
   const totalUmkm = umkm.length;
-
-  const totalIncome = transactions
-    .filter((t) => t.type === "INCOME")
-    .reduce((acc, curr) => acc + curr.amount, 0);
-  const totalExpense = transactions
-    .filter((t) => t.type === "EXPENSE")
-    .reduce((acc, curr) => acc + curr.amount, 0);
-  const currentBalance = totalIncome - totalExpense;
 
   const upcomingEvent = events[0];
   const recentEvents = events.slice(0, 3);
@@ -93,7 +84,7 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Logo Emblem & Card Highlight */}
+              {/* Logo Emblem */}
               <div className="lg:col-span-5 flex justify-center">
                 <div className="relative w-72 h-72 sm:w-80 sm:h-80 bg-white border-2 border-oskar-dark rounded-3xl p-6 shadow-neo-lg flex flex-col items-center justify-center text-center space-y-4 hover:rotate-1 transition-transform">
                   <div className="relative w-40 h-40 rounded-full border-2 border-oskar-dark overflow-hidden bg-white p-2 shadow-neo-sm">
@@ -117,9 +108,9 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ORGANIZATIONAL STATS */}
+        {/* ORGANIZATIONAL STATS (4 CARDS - KAS REMOVED PER USER REQUEST) */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             <div className="neo-card p-5 bg-amber-50 border-2 border-oskar-dark flex items-center gap-4">
               <div className="p-3 bg-oskar-yellow border-2 border-oskar-dark rounded-xl shadow-neo-sm shrink-0">
                 <Users className="w-6 h-6 text-oskar-dark" />
@@ -165,18 +156,6 @@ export default function HomePage() {
                   {totalUmkm}
                 </span>
                 <span className="text-xs font-bold text-slate-600">UMKM Dusun</span>
-              </div>
-            </div>
-
-            <div className="col-span-2 lg:col-span-1 neo-card p-5 bg-sky-50 border-2 border-oskar-dark flex items-center gap-4">
-              <div className="p-3 bg-sky-400 border-2 border-oskar-dark text-oskar-dark rounded-xl shadow-neo-sm shrink-0">
-                <Wallet className="w-6 h-6" />
-              </div>
-              <div>
-                <span className="text-lg sm:text-xl font-black text-oskar-dark block">
-                  {formatRupiah(currentBalance)}
-                </span>
-                <span className="text-xs font-bold text-slate-600">Kas Organisasi</span>
               </div>
             </div>
           </div>

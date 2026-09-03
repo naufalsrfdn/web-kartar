@@ -7,234 +7,197 @@ import { useOskar } from "@/lib/data-store";
 import {
   Users,
   UserPlus,
-  Calendar,
-  Wallet,
   ShoppingBag,
-  AlertCircle,
+  Calendar,
+  Newspaper,
+  Briefcase,
   ArrowRight,
-  Plus,
   ShieldCheck,
-  ToggleLeft,
-  ToggleRight,
+  CheckCircle2,
 } from "lucide-react";
-import { formatRupiah, formatDate } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 
 export default function AdminDashboardPage() {
   const {
     members,
     applications,
     events,
+    news,
     umkm,
-    transactions,
-    settings,
-    toggleRegistration,
+    programs,
+    approveApplication,
   } = useOskar();
 
   const totalMembers = members.filter((m) => m.isApproved).length;
   const pendingApplications = applications.filter((a) => a.status === "PENDING");
   const upcomingEvents = events;
 
-  const totalIncome = transactions
-    .filter((t) => t.type === "INCOME")
-    .reduce((acc, curr) => acc + curr.amount, 0);
-  const totalExpense = transactions
-    .filter((t) => t.type === "EXPENSE")
-    .reduce((acc, curr) => acc + curr.amount, 0);
-  const balance = totalIncome - totalExpense;
-
   return (
     <AdminLayout>
       <div className="space-y-8">
-        {/* HEADER & TOGGLE */}
+        {/* HEADER BAR */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 neo-card p-6 bg-white border-2 border-oskar-dark">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-100 text-emerald-950 font-bold text-xs rounded-xl border-2 border-oskar-dark shadow-neo-sm mb-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span>PANEL PENGURUS AKTIFF</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-oskar-dark">
-              Dashboard Admin OSKAR
-            </h1>
+            <span className="neo-badge bg-oskar-yellow text-oskar-dark mb-1">PANEL CONTROL</span>
+            <h1 className="text-2xl font-black text-oskar-dark">Dashboard Admin OSKAR</h1>
             <p className="text-xs font-medium text-slate-600">
-              Ringkasan data keanggotaan, pendaftaran pending, kas, dan kegiatan dusun.
+              Kelola data anggota, verifikasi pendaftaran, publikasikan kegiatan & UMKM dusun.
             </p>
           </div>
 
-          {/* TOGGLE REGISTRATION BUTTON */}
-          <div className="p-3 bg-amber-50 border-2 border-oskar-dark rounded-xl flex items-center gap-3">
-            <div className="text-xs font-bold text-slate-700">
-              <span>Status Pendaftaran: </span>
-              <span
-                className={settings.registrationOpen ? "text-emerald-700 font-black" : "text-rose-700 font-black"}
-              >
-                {settings.registrationOpen ? "DIBUKA" : "DITUTUP"}
-              </span>
-            </div>
-            <button
-              onClick={() => toggleRegistration(!settings.registrationOpen)}
-              className={`neo-btn text-xs py-1.5 px-3 flex items-center gap-1.5 ${
-                settings.registrationOpen
-                  ? "bg-emerald-400 text-oskar-dark hover:bg-emerald-500"
-                  : "bg-rose-500 text-white hover:bg-rose-600"
-              }`}
-            >
-              {settings.registrationOpen ? (
-                <>
-                  <ToggleRight className="w-4 h-4" /> Tutup Form
-                </>
-              ) : (
-                <>
-                  <ToggleLeft className="w-4 h-4" /> Buka Form
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-
-        {/* PENDING APPLICATIONS ALERT CARD */}
-        {pendingApplications.length > 0 && (
-          <div className="neo-card p-6 bg-rose-100 border-2 border-oskar-dark text-rose-950 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-neo">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-rose-500 text-white border-2 border-oskar-dark rounded-xl shadow-neo-sm shrink-0">
-                <AlertCircle className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-lg font-black">
-                  {pendingApplications.length} Pendaftaran Anggota Menunggu Approval!
-                </h3>
-                <p className="text-xs font-medium text-rose-900 mt-0.5">
-                  Ada calon anggota baru yang sudah mengirim formulir. Harap lakukan verifikasi data.
-                </p>
-              </div>
-            </div>
+          <div className="flex items-center gap-3 shrink-0">
             <Link
               href="/admin/pendaftaran"
-              className="neo-btn neo-btn-primary text-xs py-2.5 px-5 shrink-0 flex items-center gap-1.5"
+              className="neo-btn neo-btn-primary text-xs py-2.5 px-4 flex items-center gap-2"
             >
-              <span>Review Pendaftaran</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        )}
-
-        {/* OVERVIEW CARDS */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="neo-card p-5 bg-amber-50 border-2 border-oskar-dark space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-600">ANGGOTA RESMI</span>
-              <Users className="w-5 h-5 text-oskar-dark" />
-            </div>
-            <div className="text-3xl font-black text-oskar-dark">{totalMembers}</div>
-            <Link href="/admin/anggota" className="text-xs font-bold text-oskar-red hover:underline block">
-              Kelola data anggota →
-            </Link>
-          </div>
-
-          <div className="neo-card p-5 bg-rose-50 border-2 border-oskar-dark space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-600">PENDING APPROVAL</span>
-              <UserPlus className="w-5 h-5 text-oskar-red" />
-            </div>
-            <div className="text-3xl font-black text-oskar-dark">
-              {pendingApplications.length}
-            </div>
-            <Link href="/admin/pendaftaran" className="text-xs font-bold text-oskar-red hover:underline block">
-              Proses pendaftaran →
-            </Link>
-          </div>
-
-          <div className="neo-card p-5 bg-emerald-50 border-2 border-oskar-dark space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-600">SALDO KAS SAAT INI</span>
-              <Wallet className="w-5 h-5 text-emerald-600" />
-            </div>
-            <div className="text-2xl font-black text-emerald-950">{formatRupiah(balance)}</div>
-            <Link href="/admin/keuangan" className="text-xs font-bold text-emerald-700 hover:underline block">
-              Catat transaksi →
-            </Link>
-          </div>
-
-          <div className="neo-card p-5 bg-sky-50 border-2 border-oskar-dark space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-600">UMKM TERDAFTAR</span>
-              <ShoppingBag className="w-5 h-5 text-sky-600" />
-            </div>
-            <div className="text-3xl font-black text-oskar-dark">{umkm.length}</div>
-            <Link href="/admin/umkm" className="text-xs font-bold text-sky-700 hover:underline block">
-              Tambah usaha warga →
+              <UserPlus className="w-4 h-4" />
+              <span>Verifikasi Pendaftaran ({pendingApplications.length})</span>
             </Link>
           </div>
         </div>
 
-        {/* QUICK ACTIONS & UPCOMING AGENDA */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* QUICK ACTIONS */}
-          <div className="lg:col-span-6 neo-card p-6 bg-white border-2 border-oskar-dark space-y-4">
-            <h2 className="text-lg font-black text-oskar-dark border-b-2 border-slate-100 pb-3">
-              Aksi Cepat Admin
-            </h2>
-            <div className="grid grid-cols-2 gap-3">
-              <Link
-                href="/admin/pendaftaran"
-                className="p-4 bg-amber-50 border-2 border-oskar-dark rounded-xl shadow-neo-sm hover:-translate-y-0.5 transition-all text-xs font-bold space-y-2 block"
-              >
-                <UserPlus className="w-5 h-5 text-oskar-red" />
-                <span>Approve Pendaftaran ({pendingApplications.length})</span>
-              </Link>
-
-              <Link
-                href="/admin/anggota"
-                className="p-4 bg-emerald-50 border-2 border-oskar-dark rounded-xl shadow-neo-sm hover:-translate-y-0.5 transition-all text-xs font-bold space-y-2 block"
-              >
-                <Users className="w-5 h-5 text-emerald-600" />
-                <span>Kelola Data Anggota</span>
-              </Link>
-
-              <Link
-                href="/admin/keuangan"
-                className="p-4 bg-sky-50 border-2 border-oskar-dark rounded-xl shadow-neo-sm hover:-translate-y-0.5 transition-all text-xs font-bold space-y-2 block"
-              >
-                <Wallet className="w-5 h-5 text-sky-600" />
-                <span>Tambah Transaksi Kas</span>
-              </Link>
-
-              <Link
-                href="/admin/kegiatan"
-                className="p-4 bg-rose-50 border-2 border-oskar-dark rounded-xl shadow-neo-sm hover:-translate-y-0.5 transition-all text-xs font-bold space-y-2 block"
-              >
-                <Calendar className="w-5 h-5 text-rose-600" />
-                <span>Tambah Kegiatan Dusun</span>
-              </Link>
+        {/* METRIC CARDS (4 CLEAN METRICS) */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="neo-card p-5 bg-amber-50 border-2 border-oskar-dark flex items-center justify-between">
+            <div>
+              <span className="text-2xl font-black text-oskar-dark block">{totalMembers}</span>
+              <span className="text-xs font-bold text-slate-600">Anggota Aktif</span>
+            </div>
+            <div className="p-3 bg-oskar-yellow border-2 border-oskar-dark rounded-xl shadow-neo-sm">
+              <Users className="w-5 h-5 text-oskar-dark" />
             </div>
           </div>
 
-          {/* UPCOMING AGENDA PREVIEW */}
-          <div className="lg:col-span-6 neo-card p-6 bg-oskar-dark text-white border-2 border-oskar-dark space-y-4 flex flex-col justify-between">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-oskar-yellow">AGENDA MANDAT TERDEKAT</span>
-                <Calendar className="w-5 h-5 text-oskar-red" />
-              </div>
-              {upcomingEvents.length > 0 ? (
-                <div className="space-y-2">
-                  <h3 className="text-xl font-black text-white">{upcomingEvents[0].title}</h3>
-                  <p className="text-xs text-slate-300 font-medium">{upcomingEvents[0].description}</p>
-                  <div className="text-xs font-bold text-oskar-yellow pt-1">
-                    Tanggal: {formatDate(upcomingEvents[0].date)} | {upcomingEvents[0].location}
-                  </div>
-                </div>
-              ) : (
-                <p className="text-xs text-slate-400">Belum ada agenda mendatang terdaftar.</p>
-              )}
+          <div className="neo-card p-5 bg-rose-50 border-2 border-oskar-dark flex items-center justify-between">
+            <div>
+              <span className="text-2xl font-black text-oskar-red block">
+                {pendingApplications.length}
+              </span>
+              <span className="text-xs font-bold text-slate-600">Pendaftaran Pending</span>
             </div>
+            <div className="p-3 bg-oskar-red border-2 border-oskar-dark text-white rounded-xl shadow-neo-sm">
+              <UserPlus className="w-5 h-5" />
+            </div>
+          </div>
 
+          <div className="neo-card p-5 bg-orange-50 border-2 border-oskar-dark flex items-center justify-between">
+            <div>
+              <span className="text-2xl font-black text-oskar-dark block">{events.length}</span>
+              <span className="text-xs font-bold text-slate-600">Kegiatan Dusun</span>
+            </div>
+            <div className="p-3 bg-oskar-orange border-2 border-oskar-dark text-white rounded-xl shadow-neo-sm">
+              <Calendar className="w-5 h-5" />
+            </div>
+          </div>
+
+          <div className="neo-card p-5 bg-emerald-50 border-2 border-oskar-dark flex items-center justify-between">
+            <div>
+              <span className="text-2xl font-black text-oskar-dark block">{umkm.length}</span>
+              <span className="text-xs font-bold text-slate-600">Katalog UMKM</span>
+            </div>
+            <div className="p-3 bg-emerald-400 border-2 border-oskar-dark text-oskar-dark rounded-xl shadow-neo-sm">
+              <ShoppingBag className="w-5 h-5" />
+            </div>
+          </div>
+        </div>
+
+        {/* PENDING APPLICATIONS TABLE */}
+        <div className="neo-card p-6 bg-white border-2 border-oskar-dark space-y-4">
+          <div className="flex items-center justify-between border-b-2 border-slate-100 pb-3">
+            <h2 className="text-lg font-black text-oskar-dark flex items-center gap-2">
+              <UserPlus className="w-5 h-5 text-oskar-red" />
+              <span>Antrean Pendaftaran Anggota Baru</span>
+            </h2>
             <Link
-              href="/admin/kegiatan"
-              className="neo-btn neo-btn-secondary text-xs py-2.5 text-center mt-4"
+              href="/admin/pendaftaran"
+              className="text-xs font-bold text-oskar-red hover:underline flex items-center gap-1"
             >
-              Kelola Semua Kegiatan
+              <span>Kelola Semua</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
+
+          {pendingApplications.length > 0 ? (
+            <div className="overflow-x-auto border-2 border-oskar-dark rounded-xl">
+              <table className="w-full text-left text-xs sm:text-sm">
+                <thead className="bg-amber-100 border-b-2 border-oskar-dark text-oskar-dark font-black">
+                  <tr>
+                    <th className="p-3">Nama Lengkap</th>
+                    <th className="p-3">Gender</th>
+                    <th className="p-3">RT</th>
+                    <th className="p-3">WhatsApp</th>
+                    <th className="p-3 text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200 font-medium">
+                  {pendingApplications.map((app) => (
+                    <tr key={app.id} className="hover:bg-slate-50">
+                      <td className="p-3 font-bold text-oskar-dark">{app.fullName}</td>
+                      <td className="p-3 text-slate-600">{app.gender}</td>
+                      <td className="p-3 font-bold text-oskar-red">{app.rt}</td>
+                      <td className="p-3 text-slate-600">{app.whatsapp}</td>
+                      <td className="p-3 text-right">
+                        <button
+                          onClick={() => approveApplication(app.id)}
+                          className="neo-btn bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] py-1.5 px-3 inline-flex items-center gap-1"
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>Approve</span>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="p-6 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1">
+              <ShieldCheck className="w-8 h-8 text-emerald-500 mx-auto" />
+              <p className="text-xs font-bold text-slate-700">Tidak ada antrean pendaftaran baru.</p>
+            </div>
+          )}
+        </div>
+
+        {/* QUICK MANAGEMENT LINKS */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Link
+            href="/admin/kegiatan"
+            className="neo-card neo-card-hover p-6 bg-white border-2 border-oskar-dark space-y-3"
+          >
+            <div className="p-3 bg-oskar-yellow border-2 border-oskar-dark rounded-xl w-fit">
+              <Calendar className="w-6 h-6 text-oskar-dark" />
+            </div>
+            <h3 className="text-lg font-black text-oskar-dark">Kelola Kegiatan & Foto</h3>
+            <p className="text-xs font-medium text-slate-600">
+              Tambah dokumentasi acara baru & kompresi foto otomatis.
+            </p>
+          </Link>
+
+          <Link
+            href="/admin/umkm"
+            className="neo-card neo-card-hover p-6 bg-white border-2 border-oskar-dark space-y-3"
+          >
+            <div className="p-3 bg-emerald-400 border-2 border-oskar-dark rounded-xl w-fit">
+              <ShoppingBag className="w-6 h-6 text-oskar-dark" />
+            </div>
+            <h3 className="text-lg font-black text-oskar-dark">Katalog UMKM Dusun</h3>
+            <p className="text-xs font-medium text-slate-600">
+              Daftarkan usaha baru milik warga & pemuda dusun.
+            </p>
+          </Link>
+
+          <Link
+            href="/admin/berita"
+            className="neo-card neo-card-hover p-6 bg-white border-2 border-oskar-dark space-y-3"
+          >
+            <div className="p-3 bg-oskar-red border-2 border-oskar-dark text-white rounded-xl w-fit">
+              <Newspaper className="w-6 h-6" />
+            </div>
+            <h3 className="text-lg font-black text-oskar-dark">Artikel & Pengumuman</h3>
+            <p className="text-xs font-medium text-slate-600">
+              Tulis berita terkini seputar dusun Krekah Utara.
+            </p>
+          </Link>
         </div>
       </div>
     </AdminLayout>

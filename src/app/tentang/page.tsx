@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { Target, Compass, History, Shield, Users, Heart, ArrowRight } from "lucide-react";
+import { Users, Target, Heart, ArrowRight } from "lucide-react";
 
 export default function TentangPage() {
   return (
@@ -13,128 +13,88 @@ export default function TentangPage() {
       <Navbar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16 flex-1">
-        {/* HEADER BANNER */}
-        <section className="neo-card p-8 sm:p-12 bg-white border-2 border-oskar-dark space-y-6">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-oskar-yellow text-oskar-dark font-bold text-xs rounded-xl border-2 border-oskar-dark shadow-neo-sm">
-            <History className="w-4 h-4" />
-            <span>PROFIL ORGANISASI</span>
+        {/* HERO TENTANG */}
+        <div className="neo-card p-8 sm:p-12 bg-white border-2 border-oskar-dark space-y-6 relative overflow-hidden">
+          <div className="max-w-3xl space-y-4">
+            <span className="neo-badge bg-oskar-yellow text-oskar-dark text-xs">
+              PROFIL ORGANISASI
+            </span>
+            <h1 className="text-3xl sm:text-5xl font-black text-oskar-dark leading-tight">
+              Organisasi Pemuda Pemudi Krekah Utara
+            </h1>
+            <p className="text-base sm:text-lg font-medium text-slate-700 leading-relaxed">
+              OSKAR adalah wadah pemuda-pemudi di Dusun Krekah Utara, Kelurahan Gilangharjo, Kapanewon Pandak, Kabupaten Bantul. Berdiri atas dasar gotong royong dan kepedulian sosial untuk memajukan potensi dusun.
+            </p>
           </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-8 space-y-4">
-              <h1 className="text-4xl font-black text-oskar-dark">
-                Tentang OSKAR Krekah Utara
-              </h1>
-              <p className="text-base font-medium text-slate-700 leading-relaxed">
-                OSKAR (Organisasi Pemuda Pemudi Krekah Utara) adalah wadah otonom kemasyarakatan yang menghimpun seluruh pemuda dan pemudi di lingkungan Dusun Krekah Utara. Diberdayakan sebagai pilar penggerak gotong royong, kebudayaan, sosial, dan wirausaha dusun.
-              </p>
-            </div>
-            <div className="lg:col-span-4 flex justify-center">
-              <div className="relative w-36 h-36 rounded-full border-2 border-oskar-dark bg-amber-50 p-2 shadow-neo overflow-hidden">
-                <Image src="/logo.png" alt="Logo OSKAR" fill className="object-contain" />
-              </div>
-            </div>
-          </div>
-        </section>
+        </div>
 
         {/* VISI & MISI */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* VISI */}
-          <div className="neo-card p-8 bg-oskar-dark text-white border-2 border-oskar-dark space-y-4 shadow-neo-lg">
-            <div className="p-3 bg-oskar-red border-2 border-white rounded-xl shadow-neo-sm w-fit text-white">
-              <Compass className="w-7 h-7" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="neo-card p-8 bg-amber-50 border-2 border-oskar-dark space-y-4">
+            <div className="p-3 bg-oskar-yellow border-2 border-oskar-dark rounded-xl shadow-neo-sm inline-block">
+              <Target className="w-7 h-7 text-oskar-dark" />
             </div>
-            <h2 className="text-2xl font-black text-oskar-yellow">Visi Organisasi</h2>
-            <p className="text-sm font-medium text-slate-200 leading-relaxed">
-              "Terwujudnya Pemuda Krekah Utara yang Solid, Beralak Mulia, Kreatif, Berbudaya, dan Mandiri secara Ekonomi untuk Memajukan Dusun."
+            <h2 className="text-2xl font-black text-oskar-dark">Visi OSKAR</h2>
+            <p className="text-sm font-medium text-slate-700 leading-relaxed">
+              "Terwujudnya generasi muda Krekah Utara yang bertaqwa, berkarakter, kreatif, mandiri, dan aktif berkontribusi dalam pembangunan dusun serta pelestarian budaya."
             </p>
           </div>
 
-          {/* MISI */}
-          <div className="neo-card p-8 bg-white border-2 border-oskar-dark space-y-4 shadow-neo-lg">
-            <div className="p-3 bg-oskar-orange border-2 border-oskar-dark rounded-xl shadow-neo-sm w-fit text-white">
-              <Target className="w-7 h-7" />
+          <div className="neo-card p-8 bg-rose-50 border-2 border-oskar-dark space-y-4">
+            <div className="p-3 bg-oskar-red text-white border-2 border-oskar-dark rounded-xl shadow-neo-sm inline-block">
+              <Heart className="w-7 h-7" />
             </div>
-            <h2 className="text-2xl font-black text-oskar-dark">Misi Organisasi</h2>
-            <ul className="space-y-2.5 text-sm font-medium text-slate-700">
-              <li className="flex items-start gap-2">
-                <span className="w-2 h-2 rounded-full bg-oskar-red shrink-0 mt-1.5" />
-                <span>Mempererat tali silaturahmi & kebersamaan antar pemuda di tiap RT.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="w-2 h-2 rounded-full bg-oskar-red shrink-0 mt-1.5" />
-                <span>Mengembangkan potensi kegiatan olahraga, seni, dan kebudayaan dusun.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="w-2 h-2 rounded-full bg-oskar-red shrink-0 mt-1.5" />
-                <span>Mendorong wirausaha muda dan pemberdayaan ekonomi lokal dusun.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="w-2 h-2 rounded-full bg-oskar-red shrink-0 mt-1.5" />
-                <span>Menumbuhkan kepekaan sosial dan kepedulian lingkungan persawahan & pemukiman.</span>
-              </li>
+            <h2 className="text-2xl font-black text-oskar-dark">Misi OSKAR</h2>
+            <ul className="text-sm font-medium text-slate-700 space-y-2.5 list-disc list-inside">
+              <li>Mempererat tali silaturahmi dan kebersamaan antar pemuda di seluruh RT.</li>
+              <li>Menyelenggarakan kegiatan keagamaan, olahraga, dan kesenian secara rutin.</li>
+              <li>Dukung wirausaha muda & UMKM lokal dusun untuk kemandirian ekonomi.</li>
+              <li>Menjadi garda terdepan gotong royong dan aksi sosial masyarakat.</li>
             </ul>
           </div>
-        </section>
+        </div>
 
-        {/* TUJUAN ORGANISASI */}
-        <section className="space-y-6">
-          <div className="text-center max-w-2xl mx-auto space-y-2">
-            <span className="text-xs font-black text-oskar-red tracking-wider uppercase">
-              PRINSIP KAMI
-            </span>
-            <h2 className="text-3xl font-black text-oskar-dark">Tujuan Utama OSKAR</h2>
-          </div>
+        {/* WILAYAH RT */}
+        <div className="neo-card p-8 bg-white border-2 border-oskar-dark space-y-6">
+          <h2 className="text-2xl font-black text-oskar-dark border-b-2 border-slate-100 pb-3">
+            Cakupan Wilayah Kedusunan
+          </h2>
+          <p className="text-sm font-medium text-slate-700">
+            Anggota OSKAR tersebar di 3 wilayah RT (RT 1, RT 2, RT 3) Dusun Krekah Utara. Setiap RT memiliki perwakilan pengurus yang siap mengkoordinasikan kegiatan dusun.
+          </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="neo-card p-6 bg-amber-50 border-2 border-oskar-dark space-y-3">
-              <div className="p-3 bg-oskar-yellow border-2 border-oskar-dark rounded-xl w-fit">
-                <Users className="w-6 h-6 text-oskar-dark" />
-              </div>
-              <h3 className="text-lg font-black text-oskar-dark">Gotong Royong Dusun</h3>
-              <p className="text-xs font-medium text-slate-600 leading-relaxed">
-                Menjadi garda terdepan dalam setiap kegiatan kemasyarakatan, hajatan warga, merti dusun, dan kerja bakti rutin.
-              </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="p-4 bg-slate-50 border-2 border-oskar-dark rounded-xl text-center">
+              <h3 className="text-lg font-black text-oskar-dark">RT 1 Krekah Utara</h3>
+              <p className="text-xs font-medium text-slate-500 mt-1">Wilayah Krekah Utara Bagian Barat</p>
             </div>
-
-            <div className="neo-card p-6 bg-rose-50 border-2 border-oskar-dark space-y-3">
-              <div className="p-3 bg-oskar-red text-white border-2 border-oskar-dark rounded-xl w-fit">
-                <Shield className="w-6 h-6" />
-              </div>
-              <h3 className="text-lg font-black text-oskar-dark">Karakter Pemuda</h3>
-              <p className="text-xs font-medium text-slate-600 leading-relaxed">
-                Membentuk jiwa kepemimpinan generasi muda yang bertanggung jawab, santun, jujur, dan berintegritas tinggi.
-              </p>
+            <div className="p-4 bg-slate-50 border-2 border-oskar-dark rounded-xl text-center">
+              <h3 className="text-lg font-black text-oskar-dark">RT 2 Krekah Utara</h3>
+              <p className="text-xs font-medium text-slate-500 mt-1">Wilayah Krekah Utara Bagian Tengah</p>
             </div>
-
-            <div className="neo-card p-6 bg-emerald-50 border-2 border-oskar-dark space-y-3">
-              <div className="p-3 bg-emerald-400 text-oskar-dark border-2 border-oskar-dark rounded-xl w-fit">
-                <Heart className="w-6 h-6" />
-              </div>
-              <h3 className="text-lg font-black text-oskar-dark">Kemandirian Usaha</h3>
-              <p className="text-xs font-medium text-slate-600 leading-relaxed">
-                Wadah pendampingan bagi usaha mikro warga dusun dan melatih jiwa kemandirian ekonomi pemuda.
-              </p>
+            <div className="p-4 bg-slate-50 border-2 border-oskar-dark rounded-xl text-center">
+              <h3 className="text-lg font-black text-oskar-dark">RT 3 Krekah Utara</h3>
+              <p className="text-xs font-medium text-slate-500 mt-1">Wilayah Krekah Utara Bagian Timur</p>
             </div>
           </div>
-        </section>
+        </div>
 
-        {/* CTA TO KEPENGURUSAN & PENDAFTARAN */}
-        <section className="flex flex-col sm:flex-row items-center justify-between gap-4 p-8 bg-white neo-card border-2 border-oskar-dark">
-          <div>
-            <h3 className="text-xl font-black text-oskar-dark">Ingin Mengenal Pengurus OSKAR?</h3>
-            <p className="text-xs font-medium text-slate-600 mt-1">
-              Lihat struktur organisasi lengkap dari Ketua hingga Ketua Divisi Dusun.
+        {/* CTA TO ANGGOTA PAGE */}
+        <div className="neo-card p-8 bg-oskar-dark text-white border-2 border-oskar-dark flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="space-y-2">
+            <h2 className="text-2xl font-black text-white">Ingin Mengenal Anggota OSKAR?</h2>
+            <p className="text-xs sm:text-sm font-medium text-slate-300">
+              Lihat daftar resmi seluruh anggota Organisasi Pemuda Pemudi Krekah Utara.
             </p>
           </div>
           <Link
-            href="/pengurus"
-            className="neo-btn neo-btn-primary text-xs py-3 px-6 flex items-center gap-2 shrink-0"
+            href="/anggota"
+            className="neo-btn neo-btn-secondary text-xs sm:text-sm py-3 px-6 flex items-center gap-2 shrink-0"
           >
-            <span>Lihat Kepengurusan</span>
+            <span>Daftar Anggota OSKAR</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
-        </section>
+        </div>
       </main>
 
       <Footer />

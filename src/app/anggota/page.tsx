@@ -96,7 +96,7 @@ export default function AnggotaPage() {
           </div>
         </div>
 
-        {/* MEMBERS GRID */}
+        {/* MEMBERS GRID (RT BADGE REMOVED ON CARDS - ONLY NAME & JABATAN SHOWN) */}
         {filteredMembers.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
             {filteredMembers.map((member) => (
@@ -121,12 +121,13 @@ export default function AnggotaPage() {
                     {member.fullName}
                   </h3>
                   <div className="flex flex-wrap justify-center gap-1 pt-1">
-                    <span className="neo-badge bg-slate-100 text-oskar-dark text-[10px]">
-                      {member.rt}
-                    </span>
-                    {member.roleTitle && (
+                    {member.roleTitle ? (
                       <span className="neo-badge bg-oskar-yellow text-oskar-dark text-[10px]">
                         {member.roleTitle}
+                      </span>
+                    ) : (
+                      <span className="neo-badge bg-slate-100 text-slate-700 text-[10px]">
+                        Anggota
                       </span>
                     )}
                   </div>

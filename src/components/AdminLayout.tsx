@@ -13,7 +13,6 @@ import {
   Calendar,
   Newspaper,
   Briefcase,
-  Wallet,
   Settings,
   LogOut,
   Menu,
@@ -30,7 +29,6 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const pendingCount = applications.filter((a) => a.status === "PENDING").length;
 
-  // Sidebar items (Removed "Struktur Pengurus" per revisi.pdf page 7)
   const menuItems = [
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
     { href: "/admin/anggota", label: "Data Anggota", icon: Users },
@@ -44,7 +42,6 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     { href: "/admin/kegiatan", label: "Kelola Kegiatan", icon: Calendar },
     { href: "/admin/berita", label: "Kelola Berita", icon: Newspaper },
     { href: "/admin/program-kerja", label: "Program Kerja", icon: Briefcase },
-    { href: "/admin/keuangan", label: "Kelola Keuangan", icon: Wallet },
     { href: "/admin/pengaturan", label: "Pengaturan Sistem", icon: Settings },
   ];
 
