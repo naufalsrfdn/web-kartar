@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { MapPin, Phone, Instagram, ShieldCheck } from "lucide-react";
+import { TikTokIcon } from "@/components/TikTokIcon";
 import { createWhatsAppLink } from "@/lib/utils";
 import { useOskar } from "@/lib/data-store";
 
@@ -15,7 +16,7 @@ export const Footer: React.FC = () => {
   const igHandle = settings.instagramHandle || "@oskar.krekahutara";
   const tiktokHandle = settings.tiktokHandle || "@krekahutara";
 
-  // Format IG URL without @
+  // Format IG & TikTok URL
   const igClean = igHandle.replace("@", "");
   const tiktokClean = tiktokHandle.replace("@", "");
 
@@ -109,7 +110,7 @@ export const Footer: React.FC = () => {
                 </a>
               </div>
               <div className="flex items-center gap-2.5">
-                <span className="w-5 text-center font-bold text-slate-400 text-xs shrink-0">TT</span>
+                <TikTokIcon className="w-5 h-5 text-cyan-400 shrink-0" />
                 <a
                   href={`https://tiktok.com/@${tiktokClean}`}
                   target="_blank"

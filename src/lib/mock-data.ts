@@ -231,6 +231,6 @@ export const initialSettings: SystemSettings = {
   whatsappNumber: "083843418369",
   instagramHandle: "@oskar.krekahutara",
   tiktokHandle: "@krekahutara",
-  mapsEmbedUrl: "https://maps.app.goo.gl/NQf28uz7fPRK9fn67",
+  mapsEmbedUrl: "https://www.google.com/maps?q=artapage",
   heroNotice: "Pendaftaran anggota baru OSKAR periode 2026 resmi DIBUKA! Mari berkontribusi untuk dusun kita.",
 };
