@@ -1,0 +1,111 @@
+// Prisma schema for OSKAR Youth Organization (SQLite Engine)
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("ADMIN")
+  createdAt    DateTime @default(now())
+}
+
+model Member {
+  id          String   @id @default(uuid())
+  fullName    String
+  nickname    String?
+  pob         String
+  dob         String
+  whatsapp    String
+  rt          String
+  photoUrl    String
+  roleTitle   String?
+  isApproved  Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model MemberApplication {
+  id        String   @id @default(uuid())
+  fullName  String
+  nickname  String
+  pob       String
+  dob       String
+  whatsapp  String
+  rt        String
+  photoUrl  String
+  status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  note      String?
+  createdAt DateTime @default(now())
+}
+
+model Umkm {
+  id          String   @id @default(uuid())
+  name        String
+  owner       String
+  whatsapp    String
+  category    String   // Kuliner, Jasa, Kerajinan, Fashion, Pertanian, Lainnya
+  description String
+  priceRange  String?
+  location    String?
+  imageUrl    String
+  createdAt   DateTime @default(now())
+}
+
+model Event {
+  id            String   @id @default(uuid())
+  title         String
+  date          DateTime
+  location      String
+  description   String
+  category      String
+  previewPhotos String   // Stored as JSON string array
+  gdriveUrl     String
+  status        String   @default("UPCOMING") // UPCOMING, COMPLETED
+  createdAt     DateTime @default(now())
+}
+
+model News {
+  id        String   @id @default(uuid())
+  title     String
+  slug      String   @unique
+  thumbnail String
+  author    String
+  content   String
+  date      DateTime @default(now())
+  category  String   @default("Kegiatan")
+}
+
+model Program {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  category    String   // Sosial, Olahraga, Keagamaan, Kepemudaan, Lingkungan, Kewirausahaan
+  year        Int
+  target      String
+  status      String   @default("PLANNED") // PLANNED, ONGOING, COMPLETED
+}
+
+model FinancialTransaction {
+  id        String   @id @default(uuid())
+  title     String
+  amount    Float
+  type      String   // INCOME, EXPENSE
+  category  String
+  date      DateTime @default(now())
+  note      String?
+}
+
+model Setting {
+  id    String @id @default(uuid())
+  key   String @unique
+  value String
+}

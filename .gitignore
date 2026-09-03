@@ -1,0 +1,32 @@
+# Dependencies
+/node_modules
+/.pnpm-store
+
+# Next.js build output
+/.next/
+/out/
+/build
+
+# Production & Local Environment files
+.env
+.env*.local
+.env.production
+
+# SQLite database local dev files
+prisma/dev.db
+prisma/dev.db-journal
+*.sqlite
+
+# Logs & Debugging
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Vercel deployment cache
+.vercel
