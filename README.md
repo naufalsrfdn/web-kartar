@@ -1,79 +1,179 @@
 # Website Resmi Organisasi Pemuda Pemudi Krekah Utara (OSKAR)
 
-Official Web Application & Admin Dashboard untuk **Organisasi Pemuda Pemudi Krekah Utara (OSKAR)**. Didesain dengan gaya **Neo-Brutalism Modern**, responsif mobile-first, dan dilengkapi fitur pengelolaan keanggotaan, pendaftaran online, direktori UMKM dusun, serta dokumentasi kegiatan.
+Official Web Application & Admin Dashboard untuk **Organisasi Pemuda Pemudi Krekah Utara (OSKAR)**. Didesain dengan arsitektur modern **Next.js 14 App Router**, **Prisma ORM**, **SQLite Database (`dev.db`)**, dan gaya tampilan **Neo-Brutalism Modern** yang responsif mobile-first.
 
 🌐 **Domain Resmi:** [https://oskar.my.id](https://oskar.my.id)
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Tech Stack & Dependencies
 
 - **Framework:** Next.js 14+ (App Router, TypeScript)
-- **Styling:** Tailwind CSS (Custom Neo-Brutalist utility theme & palette)
-- **Database Engine:** SQLite (via Prisma ORM)
-- **Icons:** Lucide Icons
+- **Styling:** Tailwind CSS (Custom Neo-Brutalist utility theme, curated palette & hard shadows)
+- **Database Engine & ORM:** Prisma ORM dengan **SQLite Database** (`prisma/dev.db`)
+- **Icons:** Lucide Icons & Custom SVG TikTok Component
 - **Image Optimization:** Client-side HTML Canvas Compression (`image-compress.ts`)
 
 ---
 
-## 🚀 Fitur Utama
+## 📁 Struktur Project
 
-### Website Publik
-1. **Home (`/`)**: Banner Hero, Ringkasan 3 Statistik Organisasi, Agenda Terdekat, Dokumentasi Kegiatan Terbaru, Highlight UMKM, & CTA Pendaftaran.
-2. **Tentang OSKAR (`/tentang`)**: Profil Sejarah, Visi, Misi, dan Cakupan Wilayah RT (RT 1, RT 2, RT 3).
-3. **Anggota (`/anggota`)**: Direktori Anggota Terverifikasi dengan pencarian nama, filter per RT, dan **Pengurus BPH (Ketua, Wakil, Sekretaris, Bendahara) otomatis tampil di posisi paling atas**. Kartu anggota menampilkan **Nama Lengkap & Badge Jabatan**.
-4. **Pendaftaran Online (`/pendaftaran`)**: Form pendaftaran online (Nama Lengkap, Jenis Kelamin, Tempat/Tgl Lahir, WA, RT, Upload Foto). Integrasi status Buka/Tutup oleh Admin.
-5. **Katalog UMKM Dusun (`/umkm`)**: Direktori usaha warga & pemuda dusun lengkap dengan deskripsi, estimasi harga, dan **tombol direct chat WhatsApp**.
-6. **Kegiatan (`/kegiatan`)**: Arsip kegiatan diurutkan dari yang terbaru dengan preview foto & tombol akses ke Google Drive.
-7. **Berita (`/berita`)**: Berita dusun & pengumuman dengan detail modal scroll-locked & blurred background.
-8. **Kontak (`/kontak`)**: Informasi sekretariat, WhatsApp Admin (`083843418369`), Instagram (`@oskar.krekahutara`), TikTok (`@krekahutara`), Google Maps link (`https://maps.app.goo.gl/XXoM8dnfzE9CZJHEA`), dan form kirim pesan.
-
-### Dashboard Admin (`/admin`)
-- **Login Admin (`/admin/login`)**: Keamanan password dengan icon mata (*show/hide password*).
-- **Pengaturan & Ubah Password (`/admin/pengaturan`)**:
-  - **Password Default Admin:** `artapagedev`
-  - **Menu Ubah Password Admin:** Mengubah kata sandi admin secara dinamis langsung dari dashboard.
-  - **Toggle Pendaftaran:** Buka/Tutup sistem pendaftaran anggota publik.
-- **Approval Pendaftaran (`/admin/pendaftaran`)**: Approve / Reject antrean calon anggota baru.
-- **Kelola Anggota (`/admin/anggota`)**: CRUD data anggota, **Filter berdasarkan Gender & RT (1-3)**, set Jabatan BPH, & update foto.
-- **Kelola UMKM, Kegiatan, & Berita**: Upload foto langsung dengan **kompresi otomatis Canvas** agar ukuran file sangat ringan.
+```text
+OSKAR/
+├── public/                     # Asset statis publik (logo, gambar, dll)
+│   └── logo.png                # Logo resmi OSKAR
+├── prisma/                     # Konfigurasi ORM Database & Schema
+│   ├── schema.prisma           # Skema Prisma Models (Member, Application, Event, News, Umkm, ContactMessage, Setting)
+│   └── dev.db                  # Database SQLite (Development & Production)
+├── src/
+│   ├── app/                    # Next.js 14 App Router Page Routes & API
+│   │   ├── api/                # API Server Endpoints Real-Time
+│   │   │   └── messages/       # API CRUD Pesan Masuk Publik (/api/messages)
+│   │   ├── admin/              # Panel Dashboard Admin (/admin)
+│   │   │   ├── anggota/        # Kelola Anggota & Filter (Gender, RT 1-3)
+│   │   │   ├── berita/         # Kelola Berita & Upload Gambar (Auto Kompres)
+│   │   │   ├── kegiatan/       # Kelola Kegiatan & Upload Dokumentasi
+│   │   │   ├── login/          # Halaman Login Admin (Password: artapagedev)
+│   │   │   ├── pendaftaran/    # Approval Antrean Pendaftaran Online
+│   │   │   ├── pengaturan/     # Pengaturan Kontak, Maps Embed Artapage, & Ubah Password
+│   │   │   ├── pesan/          # Dashboard Kelola Pesan Masuk Publik (/admin/pesan)
+│   │   │   ├── umkm/           # Kelola Direktori UMKM Dusun
+│   │   │   └── page.tsx        # Dashboard Overview Admin
+│   │   ├── anggota/            # Halaman Publik Direktori Anggota OSKAR (Short BPH Top)
+│   │   ├── berita/             # Halaman Berita & Modal Detail Blurred
+│   │   ├── kegiatan/           # Halaman Kegiatan & Dokumentasi GDrive
+│   │   ├── kontak/             # Halaman Kontak Sekretariat, Form Pesan, & Peta Google Maps Embed Artapage
+│   │   ├── pendaftaran/        # Halaman Form Pendaftaran Anggota Baru Online
+│   │   ├── tentang/            # Halaman Profil Sejarah, Visi, Misi & Wilayah RT (RT 1 Tengah, RT 2 Timur, RT 3 Barat)
+│   │   ├── umkm/               # Halaman Katalog UMKM Dusun & Direct WhatsApp Order
+│   │   ├── globals.css         # Styling global & utility class Neo-Brutalism
+│   │   ├── icon.png            # Favicon logo website
+│   │   ├── layout.tsx          # Root Layout & Metadata SEO (https://oskar.my.id)
+│   │   ├── page.tsx            # Halaman Utama (Home Page)
+│   │   ├── robots.ts           # Konfigurasi SEO Robots.txt
+│   │   └── sitemap.ts          # Konfigurasi SEO Sitemap.xml
+│   │
+│   ├── components/             # Reusable UI Components
+│   │   ├── AdminLayout.tsx     # Wrapper Sidebar & Header Dashboard Admin (dengan badge Pesan Baru)
+│   │   ├── ConfirmModal.tsx    # Modal konfirmasi tindakan (hapus/approve)
+│   │   ├── Footer.tsx          # Footer website publik dinamis dari Admin Settings
+│   │   ├── Navbar.tsx          # Header & Navigasi Utama website (8 Menu)
+│   │   ├── TikTokIcon.tsx      # SVG Component Icon Logo TikTok Resmi
+│   │   └── ToastContainer.tsx  # Sistem Notifikasi Toast Interaktif
+│   │
+│   └── lib/                    # Helper Utilities, Database Singleton & State Store
+│       ├── data-store.tsx      # React Context Store, Database API Sync, & LocalStorage Fallback
+│       ├── image-compress.ts   # Helper kompresi gambar client-side (HTML Canvas)
+│       ├── mock-data.ts        # Initial seed dataset OSKAR
+│       ├── prisma.ts           # Client Prisma Database Singleton
+│       ├── types.ts            # Definisi Interface TypeScript
+│       └── utils.ts            # Helper fungsi (formatRupiah, formatDate, waLink, cn)
+│
+├── .gitignore                  # Mengabaikan node_modules, build, .env
+├── .npmrc                      # Konfigurasi bin-links=false
+├── next.config.js              # Konfigurasi Next.js & domain gambar external
+├── package.json                # Daftar dependensi & npm scripts
+├── postcss.config.js           # Konfigurasi PostCSS & Tailwind
+├── tailwind.config.ts          # Tema Neo-Brutalism (Warna, Shadow, Radius)
+├── tsconfig.json               # Konfigurasi TypeScript
+└── README.md                   # Dokumentasi proyek OSKAR
+```
 
 ---
 
-## 📸 Penjelasan Lokasi Penyimpanan File Foto (PENTING)
+## 💾 Skema Database SQLite (`prisma/schema.prisma`)
 
-Foto-foto pada sistem ini (foto profil anggota, preview foto kegiatan, dan thumbnail berita) dikelola dengan skema berikut:
+Seluruh data aplikasi menggunakan **SQLite Database (`prisma/dev.db`)** yang ringan, portabel, dan tidak memerlukan instalasi database server eksternal tambahan.
 
-### 1. Penyimpanan Foto di Modus Lokal / Browser (Dev Mode)
-- Ketika foto di-upload melalui formulir (di Pendaftaran, Admin Anggota, Admin Kegiatan, atau Admin Berita), sistem menjalankan **Canvas Compression** (`src/lib/image-compress.ts`) secara otomatis di browser.
-- Foto dikompres menjadi format Data URL (`data:image/jpeg;base64,...`) yang sangat ringan dan disimpan langsung ke **Browser LocalStorage** (`oskar_members_v2`, `oskar_events_v2`, `oskar_news_v2`).
-
-### 2. Foto Dokumentasi Resolusi Tinggi (Google Drive)
-- Untuk foto-foto kegiatan resolusi tinggi (album lengkap acara), disimpan pada **Folder Google Drive OSKAR** yang link-nya diinput oleh admin. Hal ini menjaga agar server hosting tidak penuh.
-
-### 3. Skema Penyimpanan untuk Production Server (`https://oskar.my.id`)
-Saat website di-deploy ke server live, file foto dapat disimpan dengan 2 pilihan arsitektur:
-- **Opsi A (Hosting VPS / Server Sendiri):** File foto di-upload dan disimpan di direktori server `/public/uploads/` (misalnya `/public/uploads/members/` atau `/public/uploads/events/`).
-- **Opsi B (Cloud Storage / Recommended Serverless):** File foto di-upload ke layanan cloud storage seperti **Vercel Blob**, **AWS S3**, atau **Cloudinary**, kemudian URL gambar disimpan ke database SQLite/PostgreSQL.
+### Model Database Prisma:
+1. **`ContactMessage`**: Menyimpan pesan pengunjung dari form Kontak (`/kontak`).
+   - `id`, `name`, `contact`, `message`, `isRead`, `createdAt`.
+2. **`Member`**: Menyimpan data anggota resmi.
+   - `id`, `fullName`, `gender`, `pob`, `dob`, `whatsapp`, `rt`, `photoUrl`, `roleTitle`, `isApproved`, `createdAt`.
+3. **`MemberApplication`**: Menyimpan antrean pendaftaran online publik.
+   - `id`, `fullName`, `gender`, `pob`, `dob`, `whatsapp`, `rt`, `photoUrl`, `status`, `note`, `createdAt`.
+4. **`Event`**: Menyimpan data kegiatan dusun.
+   - `id`, `title`, `date`, `location`, `description`, `category`, `previewPhotos`, `gdriveUrl`, `createdAt`.
+5. **`News`**: Menyimpan artikel berita dusun.
+   - `id`, `title`, `slug`, `thumbnail`, `content`, `date`, `category`.
+6. **`Umkm`**: Menyimpan data direktori usaha warga.
+   - `id`, `name`, `owner`, `whatsapp`, `description`, `priceRange`, `location`, `imageUrl`.
+7. **`Setting`**: Menyimpan konfigurasi kontak & maps embed dinamis.
 
 ---
 
-## 💻 Cara Menjalankan Aplikasi di Lokal
+## 📬 Fitur Pesan Masuk Publik (`/kontak` -> `/admin/pesan`)
+
+1. **Pengiriman oleh Pengunjung:**
+   - Pengunjung mengisi form **"Kirim Pesan ke Pengurus OSKAR"** di halaman `/kontak`.
+   - Data pesan dikirim via `POST /api/messages` dan tersimpan ke dalam database SQLite `ContactMessage`.
+2. **Pengelolaan oleh Admin:**
+   - Pengurus dapat membuka halaman **`Admin -> Pesan Masuk` (`/admin/pesan`)**.
+   - Admin dapat membaca isi pesan, memfilter status (Belum Dibaca / Sudah Dibaca), menghapus pesan, serta **langsung membalas pengirim via WhatsApp sekali klik**.
+   - Sidebar Admin menampilkan **badge notifikasi merah** jika ada pesan baru yang belum dibaca.
+
+---
+
+## 📸 Penjelasan Lokasi Penyimpanan File Foto
+
+1. **Modul Lokal / Browser (Dev Mode):**
+   - Saat foto di-upload (profil anggota, preview kegiatan, thumbnail berita), sistem menjalankan **Canvas Image Compression** (`src/lib/image-compress.ts`) secara otomatis di browser.
+   - Ukuran file dikompres menjadi Data URL (`data:image/jpeg;base64,...`) yang sangat ringan dan disimpan langsung ke **Browser LocalStorage** (`oskar_members_v2`, `oskar_events_v2`, `oskar_news_v2`).
+
+2. **Foto Dokumentasi Resolusi Tinggi (Google Drive):**
+   - Untuk foto-foto kegiatan resolusi tinggi (album lengkap acara), disimpan pada **Folder Google Drive OSKAR** yang link-nya diinput oleh admin. Hal ini menjaga agar server hosting tidak penuh.
+
+3. **Skema Penyimpanan Production Server (`https://oskar.my.id`):**
+   - File foto disimpan pada folder server `/public/uploads/` atau cloud storage ringan (misal Vercel Blob / Cloudinary) dan URL-nya disimpan di database SQLite.
+
+---
+
+## 💻 Cara Menjalankan Aplikasi & Database SQLite di Server / Lokal
 
 ```bash
 # 1. Install dependensi
 npm install --no-bin-links
 
-# 2. Jalankan server pengembang
+# 2. Inisialisasi Database SQLite Prisma
+npx prisma generate
+npx prisma db push
+
+# 3. Jalankan server pengembang Next.js
 npm run dev
 
-# 3. Buka browser pada URL:
+# 4. Buka browser pada URL:
 http://localhost:3000
 
-# 4. Akses Dashboard Admin:
+# 5. Akses Dashboard Admin:
 http://localhost:3000/admin/login
 # Default Password Admin: artapagedev
 ```
+
+---
+
+## 🌐 Panduan Deployment ke Production Server (`https://oskar.my.id`)
+
+### 1. Deployment ke Server VPS (Ubuntu + Nginx + PM2)
+```bash
+# Clone repository di server VPS
+git clone <repository-url> /var/www/oskar
+cd /var/www/oskar
+
+# Install dependensi & build
+npm install --no-bin-links
+npx prisma generate
+npx prisma db push
+npm run build
+
+# Jalankan dengan PM2 Process Manager
+pm2 start npm --name "oskar-web" -- start
+pm2 save
+```
+
+### 2. Deployment ke Vercel / Cloud
+1. Push repository ke GitHub / GitLab.
+2. Hubungkan repository di **Vercel Dashboard**.
+3. Set Custom Domain ke `oskar.my.id`.
 
 ---
 

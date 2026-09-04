@@ -70,6 +70,15 @@ export interface NewsItem {
   category: string;
 }
 
+export interface ContactMessage {
+  id: string;
+  name: string;
+  contact: string;
+  message: string;
+  isRead: boolean;
+  createdAt: string;
+}
+
 export interface ProgramItem {
   id: string;
   title: string;

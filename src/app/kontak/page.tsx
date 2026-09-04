@@ -9,8 +9,9 @@ import { TikTokIcon } from "@/components/TikTokIcon";
 import { createWhatsAppLink } from "@/lib/utils";
 
 export default function KontakPage() {
-  const { settings, showToast } = useOskar();
+  const { settings, showToast, addMessage } = useOskar();
   const [formState, setFormState] = useState({ name: "", contact: "", message: "" });
+  const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
 
   // Dynamic values from Admin Settings!
@@ -28,13 +29,25 @@ export default function KontakPage() {
     "Halo Admin OSKAR Krekah Utara, saya ingin berkomunikasi seputar kegiatan organisasi."
   );
 
-  // Dynamic Google Maps Iframe Embed URL for artapage
   const iframeEmbedSrc = `https://maps.google.com/maps?q=artapage&t=&z=15&ie=UTF8&iwloc=&output=embed`;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSent(true);
-    showToast("Pesan Anda berhasil dikirim ke pengurus OSKAR!", "success");
+    if (!formState.name || !formState.contact || !formState.message) {
+      alert("Seluruh field wajib diisi!");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await addMessage(formState);
+      setSent(true);
+      setFormState({ name: "", contact: "", message: "" });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -173,7 +186,7 @@ export default function KontakPage() {
             </div>
           </div>
 
-          {/* RIGHT SIDE (SEND MESSAGE FORM - PERFECT EQUAL ALIGNMENT) */}
+          {/* RIGHT SIDE (SEND MESSAGE FORM) */}
           <div className="lg:col-span-6 flex flex-col">
             <div className="neo-card p-6 sm:p-8 bg-white border-2 border-oskar-dark flex-1 flex flex-col justify-between space-y-6">
               <h2 className="text-xl font-black text-oskar-dark border-b-2 border-slate-100 pb-3">
@@ -181,11 +194,11 @@ export default function KontakPage() {
               </h2>
 
               {sent ? (
-                <div className="p-8 bg-emerald-50 border-2 border-oskar-dark rounded-xl text-center space-y-3 my-auto">
+                <div className="p-8 bg-emerald-50 border-2 border-oskar-dark rounded-xl text-center space-y-3 my-auto animate-fade-in">
                   <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
-                  <h3 className="text-lg font-black text-oskar-dark">Pesan Anda Terkirim!</h3>
+                  <h3 className="text-lg font-black text-oskar-dark">Pesan Anda Terkirim ke Admin!</h3>
                   <p className="text-xs font-medium text-slate-600">
-                    Terima kasih telah menghubungi Organisasi Pemuda Pemudi Krekah Utara. Pengurus kami akan segera merespons.
+                    Terima kasih telah menghubungi Organisasi Pemuda Pemudi Krekah Utara. Pesan Anda telah tersimpan di sistem dan pengurus kami akan segera merespons.
                   </p>
                   <button
                     onClick={() => setSent(false)}
@@ -238,10 +251,11 @@ export default function KontakPage() {
                   <div className="pt-2">
                     <button
                       type="submit"
+                      disabled={loading}
                       className="neo-btn neo-btn-primary w-full py-3.5 text-sm flex items-center justify-center gap-2"
                     >
                       <Send className="w-4 h-4" />
-                      <span>Kirim Pesan Sekarang</span>
+                      <span>{loading ? "Mengirim Pesan..." : "Kirim Pesan Sekarang"}</span>
                     </button>
                   </div>
                 </form>

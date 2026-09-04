@@ -8,8 +8,7 @@ import {
   UmkmItem,
   EventItem,
   NewsItem,
-  ProgramItem,
-  FinancialTransaction,
+  ContactMessage,
   SystemSettings,
 } from "./types";
 import {
@@ -19,8 +18,6 @@ import {
   initialUmkm,
   initialEvents,
   initialNews,
-  initialPrograms,
-  initialTransactions,
   initialSettings,
 } from "./mock-data";
 
@@ -30,6 +27,17 @@ interface ToastMessage {
   message: string;
 }
 
+const initialMessages: ContactMessage[] = [
+  {
+    id: "msg-1",
+    name: "Bambang Kurniawan",
+    contact: "081298765432",
+    message: "Halo pengurus OSKAR, saya mewakili Karang Taruna Desa sebelah bermaksud mengajak kaji tiru & turnamen bola voli persahabatan.",
+    isRead: false,
+    createdAt: "2026-09-02",
+  },
+];
+
 interface OskarContextType {
   members: Member[];
   applications: MemberApplication[];
@@ -37,8 +45,7 @@ interface OskarContextType {
   umkm: UmkmItem[];
   events: EventItem[];
   news: NewsItem[];
-  programs: ProgramItem[];
-  transactions: FinancialTransaction[];
+  messages: ContactMessage[];
   settings: SystemSettings;
   isAdminLoggedIn: boolean;
   toasts: ToastMessage[];
@@ -51,6 +58,11 @@ interface OskarContextType {
   // Toast
   showToast: (message: string, type?: "success" | "error" | "info") => void;
   removeToast: (id: string) => void;
+
+  // Messages Actions
+  addMessage: (msgData: { name: string; contact: string; message: string }) => Promise<void>;
+  markMessageRead: (id: string, isRead: boolean) => Promise<void>;
+  deleteMessage: (id: string) => Promise<void>;
 
   // Member Actions
   addApplication: (appData: Omit<MemberApplication, "id" | "status" | "createdAt">) => void;
@@ -75,15 +87,6 @@ interface OskarContextType {
   updateNews: (id: string, newsData: Partial<NewsItem>) => void;
   deleteNews: (id: string) => void;
 
-  // Program Actions
-  addProgram: (programData: Omit<ProgramItem, "id">) => void;
-  updateProgram: (id: string, programData: Partial<ProgramItem>) => void;
-  deleteProgram: (id: string) => void;
-
-  // Financial Actions
-  addTransaction: (txData: Omit<FinancialTransaction, "id">) => void;
-  deleteTransaction: (id: string) => void;
-
   // Settings
   toggleRegistration: (open: boolean) => void;
   updateSettings: (newSettings: Partial<SystemSettings>) => void;
@@ -94,12 +97,11 @@ const OskarContext = createContext<OskarContextType | undefined>(undefined);
 export const OskarProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [members, setMembers] = useState<Member[]>(initialMembers);
   const [applications, setApplications] = useState<MemberApplication[]>(initialApplications);
-  const [leadership, setLeadership] = useState<Leadership[]>(initialLeadership);
+  const [leadership] = useState<Leadership[]>(initialLeadership);
   const [umkm, setUmkm] = useState<UmkmItem[]>(initialUmkm);
   const [events, setEvents] = useState<EventItem[]>(initialEvents);
   const [news, setNews] = useState<NewsItem[]>(initialNews);
-  const [programs, setPrograms] = useState<ProgramItem[]>(initialPrograms);
-  const [transactions, setTransactions] = useState<FinancialTransaction[]>(initialTransactions);
+  const [messages, setMessages] = useState<ContactMessage[]>(initialMessages);
   const [settings, setSettings] = useState<SystemSettings>(initialSettings);
 
   const [adminPassword, setAdminPassword] = useState<string>("artapagedev");
@@ -126,11 +128,8 @@ export const OskarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const savedNews = localStorage.getItem("oskar_news_v2");
       if (savedNews) setNews(JSON.parse(savedNews));
 
-      const savedPrograms = localStorage.getItem("oskar_programs_v2");
-      if (savedPrograms) setPrograms(JSON.parse(savedPrograms));
-
-      const savedTransactions = localStorage.getItem("oskar_transactions_v2");
-      if (savedTransactions) setTransactions(JSON.parse(savedTransactions));
+      const savedMessages = localStorage.getItem("oskar_messages_v2");
+      if (savedMessages) setMessages(JSON.parse(savedMessages));
 
       const savedSettings = localStorage.getItem("oskar_settings_v2");
       if (savedSettings) setSettings(JSON.parse(savedSettings));
@@ -140,6 +139,20 @@ export const OskarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } catch (e) {
       console.warn("LocalStorage reading error:", e);
     }
+
+    // Attempt to fetch real database messages from API endpoint
+    fetch("/api/messages")
+      .then((res) => {
+        if (res.ok) return res.json();
+        return null;
+      })
+      .then((dbMsgs) => {
+        if (dbMsgs && Array.isArray(dbMsgs) && dbMsgs.length > 0) {
+          setMessages(dbMsgs);
+          saveLocal("oskar_messages_v2", dbMsgs);
+        }
+      })
+      .catch((err) => console.warn("API Messages load error (fallback to local):", err));
   }, []);
 
   const showToast = (message: string, type: "success" | "error" | "info" = "success") => {
@@ -162,7 +175,7 @@ export const OskarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  // Auth - Default password is "artapagedev"
+  // Auth
   const loginAdmin = (password: string): boolean => {
     if (password === adminPassword || password === "artapagedev") {
       setIsAdminLoggedIn(true);
@@ -194,6 +207,66 @@ export const OskarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     saveLocal("oskar_admin_password", newPass);
     showToast("Password admin berhasil diperbarui!", "success");
     return true;
+  };
+
+  // Messages Actions (Persisted to DB & Local state)
+  const addMessage = async (msgData: { name: string; contact: string; message: string }) => {
+    const tempMsg: ContactMessage = {
+      id: "msg-" + Date.now(),
+      ...msgData,
+      isRead: false,
+      createdAt: new Date().toISOString().split("T")[0],
+    };
+
+    const updated = [tempMsg, ...messages];
+    setMessages(updated);
+    saveLocal("oskar_messages_v2", updated);
+
+    try {
+      const res = await fetch("/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(msgData),
+      });
+      if (res.ok) {
+        const saved = await res.json();
+        const synced = updated.map((m) => (m.id === tempMsg.id ? saved : m));
+        setMessages(synced);
+        saveLocal("oskar_messages_v2", synced);
+      }
+    } catch (e) {
+      console.warn("API Post Message error:", e);
+    }
+    showToast("Pesan Anda telah dikirim ke pengurus OSKAR!", "success");
+  };
+
+  const markMessageRead = async (id: string, isRead: boolean) => {
+    const updated = messages.map((m) => (m.id === id ? { ...m, isRead } : m));
+    setMessages(updated);
+    saveLocal("oskar_messages_v2", updated);
+
+    try {
+      await fetch("/api/messages", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, isRead }),
+      });
+    } catch (e) {
+      console.warn("API Patch Message error:", e);
+    }
+  };
+
+  const deleteMessage = async (id: string) => {
+    const updated = messages.filter((m) => m.id !== id);
+    setMessages(updated);
+    saveLocal("oskar_messages_v2", updated);
+
+    try {
+      await fetch(`/api/messages?id=${id}`, { method: "DELETE" });
+    } catch (e) {
+      console.warn("API Delete Message error:", e);
+    }
+    showToast("Pesan telah dihapus.", "info");
   };
 
   // Member Applications & Members
@@ -354,45 +427,6 @@ export const OskarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     showToast("Artikel berita telah dihapus.", "info");
   };
 
-  // Program Actions
-  const addProgram = (programData: Omit<ProgramItem, "id">) => {
-    const newItem: ProgramItem = { ...programData, id: "p-" + Date.now() };
-    const updated = [newItem, ...programs];
-    setPrograms(updated);
-    saveLocal("oskar_programs_v2", updated);
-    showToast("Program Kerja baru berhasil ditambahkan!", "success");
-  };
-
-  const updateProgram = (id: string, programData: Partial<ProgramItem>) => {
-    const updated = programs.map((p) => (p.id === id ? { ...p, ...programData } : p));
-    setPrograms(updated);
-    saveLocal("oskar_programs_v2", updated);
-    showToast("Program kerja berhasil diperbarui!", "success");
-  };
-
-  const deleteProgram = (id: string) => {
-    const updated = programs.filter((p) => p.id !== id);
-    setPrograms(updated);
-    saveLocal("oskar_programs_v2", updated);
-    showToast("Program kerja telah dihapus.", "info");
-  };
-
-  // Financial Actions
-  const addTransaction = (txData: Omit<FinancialTransaction, "id">) => {
-    const newItem: FinancialTransaction = { ...txData, id: "t-" + Date.now() };
-    const updated = [newItem, ...transactions];
-    setTransactions(updated);
-    saveLocal("oskar_transactions_v2", updated);
-    showToast(`Transaksi ${txData.type === "INCOME" ? "Pemasukan" : "Pengeluaran"} telah dicatat!`, "success");
-  };
-
-  const deleteTransaction = (id: string) => {
-    const updated = transactions.filter((t) => t.id !== id);
-    setTransactions(updated);
-    saveLocal("oskar_transactions_v2", updated);
-    showToast("Catatan transaksi telah dihapus.", "info");
-  };
-
   // Settings
   const toggleRegistration = (open: boolean) => {
     const updated = { ...settings, registrationOpen: open };
@@ -417,8 +451,7 @@ export const OskarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         umkm,
         events,
         news,
-        programs,
-        transactions,
+        messages,
         settings,
         isAdminLoggedIn,
         toasts,
@@ -427,6 +460,9 @@ export const OskarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         changeAdminPassword,
         showToast,
         removeToast,
+        addMessage,
+        markMessageRead,
+        deleteMessage,
         addApplication,
         approveApplication,
         rejectApplication,
@@ -442,11 +478,6 @@ export const OskarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         addNews,
         updateNews,
         deleteNews,
-        addProgram,
-        updateProgram,
-        deleteProgram,
-        addTransaction,
-        deleteTransaction,
         toggleRegistration,
         updateSettings,
       }}

@@ -12,6 +12,7 @@ import {
   ShoppingBag,
   Calendar,
   Newspaper,
+  Mail,
   Settings,
   LogOut,
   Menu,
@@ -23,10 +24,11 @@ import {
 export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const { isAdminLoggedIn, logoutAdmin, applications } = useOskar();
+  const { isAdminLoggedIn, logoutAdmin, applications, messages } = useOskar();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const pendingCount = applications.filter((a) => a.status === "PENDING").length;
+  const unreadMessagesCount = messages.filter((m) => !m.isRead).length;
 
   const menuItems = [
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
@@ -36,6 +38,12 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       label: "Pendaftaran Pending",
       icon: UserPlus,
       badge: pendingCount > 0 ? pendingCount : null,
+    },
+    {
+      href: "/admin/pesan",
+      label: "Pesan Masuk",
+      icon: Mail,
+      badge: unreadMessagesCount > 0 ? unreadMessagesCount : null,
     },
     { href: "/admin/umkm", label: "Katalog UMKM", icon: ShoppingBag },
     { href: "/admin/kegiatan", label: "Kelola Kegiatan", icon: Calendar },

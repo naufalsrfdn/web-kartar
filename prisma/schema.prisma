@@ -21,7 +21,7 @@ model User {
 model Member {
   id          String   @id @default(uuid())
   fullName    String
-  nickname    String?
+  gender      String   @default("Laki-laki")
   pob         String
   dob         String
   whatsapp    String
@@ -36,7 +36,7 @@ model Member {
 model MemberApplication {
   id        String   @id @default(uuid())
   fullName  String
-  nickname  String
+  gender    String   @default("Laki-laki")
   pob       String
   dob       String
   whatsapp  String
@@ -52,7 +52,6 @@ model Umkm {
   name        String
   owner       String
   whatsapp    String
-  category    String   // Kuliner, Jasa, Kerajinan, Fashion, Pertanian, Lainnya
   description String
   priceRange  String?
   location    String?
@@ -63,13 +62,12 @@ model Umkm {
 model Event {
   id            String   @id @default(uuid())
   title         String
-  date          DateTime
+  date          String
   location      String
   description   String
   category      String
-  previewPhotos String   // Stored as JSON string array
+  previewPhotos String   // JSON array of photo URLs
   gdriveUrl     String
-  status        String   @default("UPCOMING") // UPCOMING, COMPLETED
   createdAt     DateTime @default(now())
 }
 
@@ -78,30 +76,18 @@ model News {
   title     String
   slug      String   @unique
   thumbnail String
-  author    String
   content   String
-  date      DateTime @default(now())
+  date      String
   category  String   @default("Kegiatan")
 }
 
-model Program {
-  id          String   @id @default(uuid())
-  title       String
-  description String
-  category    String   // Sosial, Olahraga, Keagamaan, Kepemudaan, Lingkungan, Kewirausahaan
-  year        Int
-  target      String
-  status      String   @default("PLANNED") // PLANNED, ONGOING, COMPLETED
-}
-
-model FinancialTransaction {
+model ContactMessage {
   id        String   @id @default(uuid())
-  title     String
-  amount    Float
-  type      String   // INCOME, EXPENSE
-  category  String
-  date      DateTime @default(now())
-  note      String?
+  name      String
+  contact   String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
 }
 
 model Setting {

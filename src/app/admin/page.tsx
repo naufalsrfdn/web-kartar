@@ -10,12 +10,11 @@ import {
   ShoppingBag,
   Calendar,
   Newspaper,
-  Briefcase,
+  Mail,
   ArrowRight,
   ShieldCheck,
   CheckCircle2,
 } from "lucide-react";
-import { formatDate } from "@/lib/utils";
 
 export default function AdminDashboardPage() {
   const {
@@ -24,13 +23,13 @@ export default function AdminDashboardPage() {
     events,
     news,
     umkm,
-    programs,
+    messages,
     approveApplication,
   } = useOskar();
 
   const totalMembers = members.filter((m) => m.isApproved).length;
   const pendingApplications = applications.filter((a) => a.status === "PENDING");
-  const upcomingEvents = events;
+  const unreadMessages = messages.filter((m) => !m.isRead);
 
   return (
     <AdminLayout>
@@ -41,7 +40,7 @@ export default function AdminDashboardPage() {
             <span className="neo-badge bg-oskar-yellow text-oskar-dark mb-1">PANEL CONTROL</span>
             <h1 className="text-2xl font-black text-oskar-dark">Dashboard Admin OSKAR</h1>
             <p className="text-xs font-medium text-slate-600">
-              Kelola data anggota, verifikasi pendaftaran, publikasikan kegiatan & UMKM dusun.
+              Kelola data anggota, verifikasi pendaftaran, baca pesan masuk, dan publikasikan kegiatan dusun.
             </p>
           </div>
 
@@ -56,8 +55,8 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* METRIC CARDS (4 CLEAN METRICS) */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        {/* METRIC CARDS (5 CLEAN METRICS INCLUDING UNREAD MESSAGES) */}
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
           <div className="neo-card p-5 bg-amber-50 border-2 border-oskar-dark flex items-center justify-between">
             <div>
               <span className="text-2xl font-black text-oskar-dark block">{totalMembers}</span>
@@ -80,6 +79,18 @@ export default function AdminDashboardPage() {
             </div>
           </div>
 
+          <div className="neo-card p-5 bg-sky-50 border-2 border-oskar-dark flex items-center justify-between">
+            <div>
+              <span className="text-2xl font-black text-sky-900 block">
+                {unreadMessages.length}
+              </span>
+              <span className="text-xs font-bold text-slate-600">Pesan Baru</span>
+            </div>
+            <div className="p-3 bg-sky-400 border-2 border-oskar-dark text-oskar-dark rounded-xl shadow-neo-sm">
+              <Mail className="w-5 h-5" />
+            </div>
+          </div>
+
           <div className="neo-card p-5 bg-orange-50 border-2 border-oskar-dark flex items-center justify-between">
             <div>
               <span className="text-2xl font-black text-oskar-dark block">{events.length}</span>
@@ -90,7 +101,7 @@ export default function AdminDashboardPage() {
             </div>
           </div>
 
-          <div className="neo-card p-5 bg-emerald-50 border-2 border-oskar-dark flex items-center justify-between">
+          <div className="col-span-2 lg:col-span-1 neo-card p-5 bg-emerald-50 border-2 border-oskar-dark flex items-center justify-between">
             <div>
               <span className="text-2xl font-black text-oskar-dark block">{umkm.length}</span>
               <span className="text-xs font-bold text-slate-600">Katalog UMKM</span>
@@ -158,8 +169,21 @@ export default function AdminDashboardPage() {
           )}
         </div>
 
-        {/* QUICK MANAGEMENT LINKS */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* QUICK MANAGEMENT LINKS (INCLUDING PESAN MASUK) */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <Link
+            href="/admin/pesan"
+            className="neo-card neo-card-hover p-6 bg-white border-2 border-oskar-dark space-y-3"
+          >
+            <div className="p-3 bg-sky-400 border-2 border-oskar-dark rounded-xl w-fit">
+              <Mail className="w-6 h-6 text-oskar-dark" />
+            </div>
+            <h3 className="text-lg font-black text-oskar-dark">Pesan Masuk ({messages.length})</h3>
+            <p className="text-xs font-medium text-slate-600">
+              Baca dan balas pesan/pertanyaan publik dari halaman Kontak.
+            </p>
+          </Link>
+
           <Link
             href="/admin/kegiatan"
             className="neo-card neo-card-hover p-6 bg-white border-2 border-oskar-dark space-y-3"
