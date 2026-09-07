@@ -27,16 +27,7 @@ interface ToastMessage {
   message: string;
 }
 
-const initialMessages: ContactMessage[] = [
-  {
-    id: "msg-1",
-    name: "Bambang Kurniawan",
-    contact: "081298765432",
-    message: "Halo pengurus OSKAR, saya mewakili Karang Taruna Desa sebelah bermaksud mengajak kaji tiru & turnamen bola voli persahabatan.",
-    isRead: false,
-    createdAt: "2026-09-02",
-  },
-];
+const initialMessages: ContactMessage[] = [];
 
 interface OskarContextType {
   members: Member[];
@@ -65,31 +56,31 @@ interface OskarContextType {
   deleteMessage: (id: string) => Promise<void>;
 
   // Member Actions
-  addApplication: (appData: Omit<MemberApplication, "id" | "status" | "createdAt">) => void;
-  approveApplication: (id: string) => void;
-  rejectApplication: (id: string, note?: string) => void;
-  addMember: (memberData: Omit<Member, "id" | "createdAt">) => void;
-  updateMember: (id: string, updated: Partial<Member>) => void;
-  deleteMember: (id: string) => void;
+  addApplication: (appData: Omit<MemberApplication, "id" | "status" | "createdAt">) => Promise<void>;
+  approveApplication: (id: string) => Promise<void>;
+  rejectApplication: (id: string, note?: string) => Promise<void>;
+  addMember: (memberData: Omit<Member, "id" | "createdAt">) => Promise<void>;
+  updateMember: (id: string, updated: Partial<Member>) => Promise<void>;
+  deleteMember: (id: string) => Promise<void>;
 
   // UMKM Actions
-  addUmkm: (umkmData: Omit<UmkmItem, "id">) => void;
-  updateUmkm: (id: string, umkmData: Partial<UmkmItem>) => void;
-  deleteUmkm: (id: string) => void;
+  addUmkm: (umkmData: Omit<UmkmItem, "id">) => Promise<void>;
+  updateUmkm: (id: string, umkmData: Partial<UmkmItem>) => Promise<void>;
+  deleteUmkm: (id: string) => Promise<void>;
 
   // Event Actions
-  addEvent: (eventData: Omit<EventItem, "id">) => void;
-  updateEvent: (id: string, eventData: Partial<EventItem>) => void;
-  deleteEvent: (id: string) => void;
+  addEvent: (eventData: Omit<EventItem, "id">) => Promise<void>;
+  updateEvent: (id: string, eventData: Partial<EventItem>) => Promise<void>;
+  deleteEvent: (id: string) => Promise<void>;
 
   // News Actions
-  addNews: (newsData: Omit<NewsItem, "id">) => void;
-  updateNews: (id: string, newsData: Partial<NewsItem>) => void;
-  deleteNews: (id: string) => void;
+  addNews: (newsData: Omit<NewsItem, "id">) => Promise<void>;
+  updateNews: (id: string, newsData: Partial<NewsItem>) => Promise<void>;
+  deleteNews: (id: string) => Promise<void>;
 
   // Settings
-  toggleRegistration: (open: boolean) => void;
-  updateSettings: (newSettings: Partial<SystemSettings>) => void;
+  toggleRegistration: (open: boolean) => Promise<void>;
+  updateSettings: (newSettings: Partial<SystemSettings>) => Promise<void>;
 }
 
 const OskarContext = createContext<OskarContextType | undefined>(undefined);
@@ -108,31 +99,50 @@ export const OskarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState<boolean>(false);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
+  // Synchronize state with central SQLite database
+  const refreshAllData = async () => {
+    try {
+      const [resMembers, resApps, resUmkm, resEvents, resNews, resMsgs, resSettings] =
+        await Promise.allSettled([
+          fetch("/api/members").then((r) => r.json()),
+          fetch("/api/applications").then((r) => r.json()),
+          fetch("/api/umkm").then((r) => r.json()),
+          fetch("/api/events").then((r) => r.json()),
+          fetch("/api/news").then((r) => r.json()),
+          fetch("/api/messages").then((r) => r.json()),
+          fetch("/api/settings").then((r) => r.json()),
+        ]);
+
+      if (resMembers.status === "fulfilled" && Array.isArray(resMembers.value) && resMembers.value.length > 0) {
+        setMembers(resMembers.value);
+      }
+      if (resApps.status === "fulfilled" && Array.isArray(resApps.value) && resApps.value.length > 0) {
+        setApplications(resApps.value);
+      }
+      if (resUmkm.status === "fulfilled" && Array.isArray(resUmkm.value) && resUmkm.value.length > 0) {
+        setUmkm(resUmkm.value);
+      }
+      if (resEvents.status === "fulfilled" && Array.isArray(resEvents.value) && resEvents.value.length > 0) {
+        setEvents(resEvents.value);
+      }
+      if (resNews.status === "fulfilled" && Array.isArray(resNews.value) && resNews.value.length > 0) {
+        setNews(resNews.value);
+      }
+      if (resMsgs.status === "fulfilled" && Array.isArray(resMsgs.value)) {
+        setMessages(resMsgs.value);
+      }
+      if (resSettings.status === "fulfilled" && resSettings.value && typeof resSettings.value === "object") {
+        setSettings((prev) => ({ ...prev, ...resSettings.value }));
+      }
+    } catch (err) {
+      console.warn("DB synchronization load error:", err);
+    }
+  };
+
   useEffect(() => {
     try {
       const savedPass = localStorage.getItem("oskar_admin_password");
       if (savedPass) setAdminPassword(savedPass);
-
-      const savedMembers = localStorage.getItem("oskar_members_v2");
-      if (savedMembers) setMembers(JSON.parse(savedMembers));
-
-      const savedApps = localStorage.getItem("oskar_applications_v2");
-      if (savedApps) setApplications(JSON.parse(savedApps));
-
-      const savedUmkm = localStorage.getItem("oskar_umkm_v2");
-      if (savedUmkm) setUmkm(JSON.parse(savedUmkm));
-
-      const savedEvents = localStorage.getItem("oskar_events_v2");
-      if (savedEvents) setEvents(JSON.parse(savedEvents));
-
-      const savedNews = localStorage.getItem("oskar_news_v2");
-      if (savedNews) setNews(JSON.parse(savedNews));
-
-      const savedMessages = localStorage.getItem("oskar_messages_v2");
-      if (savedMessages) setMessages(JSON.parse(savedMessages));
-
-      const savedSettings = localStorage.getItem("oskar_settings_v2");
-      if (savedSettings) setSettings(JSON.parse(savedSettings));
 
       const savedAdmin = localStorage.getItem("oskar_admin");
       if (savedAdmin === "true") setIsAdminLoggedIn(true);
@@ -140,19 +150,7 @@ export const OskarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       console.warn("LocalStorage reading error:", e);
     }
 
-    // Attempt to fetch real database messages from API endpoint
-    fetch("/api/messages")
-      .then((res) => {
-        if (res.ok) return res.json();
-        return null;
-      })
-      .then((dbMsgs) => {
-        if (dbMsgs && Array.isArray(dbMsgs) && dbMsgs.length > 0) {
-          setMessages(dbMsgs);
-          saveLocal("oskar_messages_v2", dbMsgs);
-        }
-      })
-      .catch((err) => console.warn("API Messages load error (fallback to local):", err));
+    refreshAllData();
   }, []);
 
   const showToast = (message: string, type: "success" | "error" | "info" = "success") => {
@@ -165,14 +163,6 @@ export const OskarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const removeToast = (id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
-  };
-
-  const saveLocal = (key: string, data: any) => {
-    try {
-      localStorage.setItem(key, JSON.stringify(data));
-    } catch (e) {
-      console.warn("LocalStorage writing error:", e);
-    }
   };
 
   // Auth
@@ -204,24 +194,13 @@ export const OskarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
 
     setAdminPassword(newPass);
-    saveLocal("oskar_admin_password", newPass);
+    localStorage.setItem("oskar_admin_password", newPass);
     showToast("Password admin berhasil diperbarui!", "success");
     return true;
   };
 
-  // Messages Actions (Persisted to DB & Local state)
+  // Messages Actions
   const addMessage = async (msgData: { name: string; contact: string; message: string }) => {
-    const tempMsg: ContactMessage = {
-      id: "msg-" + Date.now(),
-      ...msgData,
-      isRead: false,
-      createdAt: new Date().toISOString().split("T")[0],
-    };
-
-    const updated = [tempMsg, ...messages];
-    setMessages(updated);
-    saveLocal("oskar_messages_v2", updated);
-
     try {
       const res = await fetch("/api/messages", {
         method: "POST",
@@ -230,9 +209,7 @@ export const OskarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       });
       if (res.ok) {
         const saved = await res.json();
-        const synced = updated.map((m) => (m.id === tempMsg.id ? saved : m));
-        setMessages(synced);
-        saveLocal("oskar_messages_v2", synced);
+        setMessages((prev) => [saved, ...prev]);
       }
     } catch (e) {
       console.warn("API Post Message error:", e);
@@ -241,10 +218,7 @@ export const OskarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const markMessageRead = async (id: string, isRead: boolean) => {
-    const updated = messages.map((m) => (m.id === id ? { ...m, isRead } : m));
-    setMessages(updated);
-    saveLocal("oskar_messages_v2", updated);
-
+    setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, isRead } : m)));
     try {
       await fetch("/api/messages", {
         method: "PATCH",
@@ -257,10 +231,7 @@ export const OskarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const deleteMessage = async (id: string) => {
-    const updated = messages.filter((m) => m.id !== id);
-    setMessages(updated);
-    saveLocal("oskar_messages_v2", updated);
-
+    setMessages((prev) => prev.filter((m) => m.id !== id));
     try {
       await fetch(`/api/messages?id=${id}`, { method: "DELETE" });
     } catch (e) {
@@ -270,176 +241,284 @@ export const OskarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   // Member Applications & Members
-  const addApplication = (appData: Omit<MemberApplication, "id" | "status" | "createdAt">) => {
-    const newApp: MemberApplication = {
-      ...appData,
-      id: "app-" + Date.now(),
-      status: "PENDING",
-      createdAt: new Date().toISOString().split("T")[0],
-    };
-    const updated = [newApp, ...applications];
-    setApplications(updated);
-    saveLocal("oskar_applications_v2", updated);
-    showToast("Pendaftaran Anda berhasil dikirim! Menunggu persetujuan Admin OSKAR.", "success");
-  };
-
-  const approveApplication = (id: string) => {
-    const target = applications.find((a) => a.id === id);
-    if (!target) return;
-
-    const updatedApps = applications.map((a) =>
-      a.id === id ? { ...a, status: "APPROVED" as const } : a
-    );
-    setApplications(updatedApps);
-    saveLocal("oskar_applications_v2", updatedApps);
-
-    const newMember: Member = {
-      id: "m-" + Date.now(),
-      fullName: target.fullName,
-      gender: target.gender,
-      pob: target.pob,
-      dob: target.dob,
-      whatsapp: target.whatsapp,
-      rt: target.rt,
-      photoUrl: target.photoUrl,
-      isApproved: true,
-      createdAt: new Date().toISOString().split("T")[0],
-    };
-
-    const updatedMembers = [newMember, ...members];
-    setMembers(updatedMembers);
-    saveLocal("oskar_members_v2", updatedMembers);
-
-    showToast(`Pendaftaran ${target.fullName} berhasil disetujui!`, "success");
-  };
-
-  const rejectApplication = (id: string, note?: string) => {
-    const target = applications.find((a) => a.id === id);
-    if (!target) return;
-
-    const updatedApps = applications.map((a) =>
-      a.id === id ? { ...a, status: "REJECTED" as const, note } : a
-    );
-    setApplications(updatedApps);
-    saveLocal("oskar_applications_v2", updatedApps);
-
-    showToast(`Pendaftaran ${target.fullName} ditolak.`, "info");
-  };
-
-  const addMember = (memberData: Omit<Member, "id" | "createdAt">) => {
-    const newMember: Member = {
-      ...memberData,
-      id: "m-" + Date.now(),
-      createdAt: new Date().toISOString().split("T")[0],
-    };
-    const updated = [newMember, ...members];
-    setMembers(updated);
-    saveLocal("oskar_members_v2", updated);
-    showToast(`Anggota baru ${newMember.fullName} berhasil ditambahkan!`, "success");
-  };
-
-  const updateMember = (id: string, updated: Partial<Member>) => {
-    const current = members.find((m) => m.id === id);
-    if (current && updated.photoUrl && updated.photoUrl !== current.photoUrl) {
-      showToast(`Foto ${current.fullName} diperbarui. File foto lama otomatis dibersihkan dari penyimpanan.`, "info");
+  const addApplication = async (appData: Omit<MemberApplication, "id" | "status" | "createdAt">) => {
+    try {
+      const res = await fetch("/api/applications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(appData),
+      });
+      if (res.ok) {
+        const savedApp = await res.json();
+        setApplications((prev) => [savedApp, ...prev]);
+        showToast("Pendaftaran Anda berhasil dikirim! Menunggu persetujuan Admin OSKAR.", "success");
+        return;
+      }
+    } catch (e) {
+      console.warn("API Post Application error:", e);
     }
-
-    const updatedMembers = members.map((m) => (m.id === id ? { ...m, ...updated } : m));
-    setMembers(updatedMembers);
-    saveLocal("oskar_members_v2", updatedMembers);
-    showToast("Data anggota berhasil diperbarui!", "success");
+    showToast("Gagal menyimpan pendaftaran ke database server.", "error");
   };
 
-  const deleteMember = (id: string) => {
+  const approveApplication = async (id: string) => {
+    const target = applications.find((a) => a.id === id);
+    try {
+      const res = await fetch("/api/applications", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status: "APPROVED" }),
+      });
+      if (res.ok) {
+        await refreshAllData();
+        showToast(`Pendaftaran ${target?.fullName || ""} berhasil disetujui!`, "success");
+        return;
+      }
+    } catch (e) {
+      console.warn("API Approve Application error:", e);
+    }
+    showToast("Gagal menyetujui pendaftaran.", "error");
+  };
+
+  const rejectApplication = async (id: string, note?: string) => {
+    const target = applications.find((a) => a.id === id);
+    try {
+      const res = await fetch("/api/applications", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status: "REJECTED", note }),
+      });
+      if (res.ok) {
+        setApplications((prev) =>
+          prev.map((a) => (a.id === id ? { ...a, status: "REJECTED" as const, note } : a))
+        );
+        showToast(`Pendaftaran ${target?.fullName || ""} ditolak.`, "info");
+        return;
+      }
+    } catch (e) {
+      console.warn("API Reject Application error:", e);
+    }
+  };
+
+  const addMember = async (memberData: Omit<Member, "id" | "createdAt">) => {
+    try {
+      const res = await fetch("/api/members", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(memberData),
+      });
+      if (res.ok) {
+        const savedMember = await res.json();
+        setMembers((prev) => [savedMember, ...prev]);
+        showToast(`Anggota baru ${savedMember.fullName} berhasil ditambahkan!`, "success");
+        return;
+      }
+    } catch (e) {
+      console.warn("API Add Member error:", e);
+    }
+    showToast("Gagal menambahkan anggota.", "error");
+  };
+
+  const updateMember = async (id: string, updated: Partial<Member>) => {
+    try {
+      const res = await fetch("/api/members", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, ...updated }),
+      });
+      if (res.ok) {
+        const updatedMember = await res.json();
+        setMembers((prev) => prev.map((m) => (m.id === id ? updatedMember : m)));
+        showToast("Data anggota berhasil diperbarui!", "success");
+        return;
+      }
+    } catch (e) {
+      console.warn("API Update Member error:", e);
+    }
+  };
+
+  const deleteMember = async (id: string) => {
     const target = members.find((m) => m.id === id);
-    const updated = members.filter((m) => m.id !== id);
-    setMembers(updated);
-    saveLocal("oskar_members_v2", updated);
-    showToast(`Data anggota ${target?.fullName || ""} berhasil dihapus!`, "info");
+    try {
+      const res = await fetch(`/api/members?id=${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setMembers((prev) => prev.filter((m) => m.id !== id));
+        showToast(`Data anggota ${target?.fullName || ""} berhasil dihapus!`, "info");
+        return;
+      }
+    } catch (e) {
+      console.warn("API Delete Member error:", e);
+    }
   };
 
   // UMKM Actions
-  const addUmkm = (umkmData: Omit<UmkmItem, "id">) => {
-    const newItem: UmkmItem = { ...umkmData, id: "u-" + Date.now() };
-    const updated = [newItem, ...umkm];
-    setUmkm(updated);
-    saveLocal("oskar_umkm_v2", updated);
-    showToast(`UMKM "${newItem.name}" berhasil ditambahkan!`, "success");
+  const addUmkm = async (umkmData: Omit<UmkmItem, "id">) => {
+    try {
+      const res = await fetch("/api/umkm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(umkmData),
+      });
+      if (res.ok) {
+        const newItem = await res.json();
+        setUmkm((prev) => [newItem, ...prev]);
+        showToast(`UMKM "${newItem.name}" berhasil ditambahkan!`, "success");
+        return;
+      }
+    } catch (e) {
+      console.warn("API Add UMKM error:", e);
+    }
   };
 
-  const updateUmkm = (id: string, umkmData: Partial<UmkmItem>) => {
-    const updated = umkm.map((u) => (u.id === id ? { ...u, ...umkmData } : u));
-    setUmkm(updated);
-    saveLocal("oskar_umkm_v2", updated);
-    showToast("Data UMKM berhasil diperbarui!", "success");
+  const updateUmkm = async (id: string, umkmData: Partial<UmkmItem>) => {
+    try {
+      const res = await fetch("/api/umkm", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, ...umkmData }),
+      });
+      if (res.ok) {
+        const updatedItem = await res.json();
+        setUmkm((prev) => prev.map((u) => (u.id === id ? updatedItem : u)));
+        showToast("Data UMKM berhasil diperbarui!", "success");
+        return;
+      }
+    } catch (e) {
+      console.warn("API Update UMKM error:", e);
+    }
   };
 
-  const deleteUmkm = (id: string) => {
-    const updated = umkm.filter((u) => u.id !== id);
-    setUmkm(updated);
-    saveLocal("oskar_umkm_v2", updated);
-    showToast("UMKM telah dihapus dari direktori.", "info");
+  const deleteUmkm = async (id: string) => {
+    try {
+      const res = await fetch(`/api/umkm?id=${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setUmkm((prev) => prev.filter((u) => u.id !== id));
+        showToast("UMKM telah dihapus dari direktori.", "info");
+        return;
+      }
+    } catch (e) {
+      console.warn("API Delete UMKM error:", e);
+    }
   };
 
   // Event Actions
-  const addEvent = (eventData: Omit<EventItem, "id">) => {
-    const newItem: EventItem = { ...eventData, id: "e-" + Date.now() };
-    const updated = [newItem, ...events];
-    setEvents(updated);
-    saveLocal("oskar_events_v2", updated);
-    showToast(`Kegiatan "${newItem.title}" berhasil dibuat!`, "success");
+  const addEvent = async (eventData: Omit<EventItem, "id">) => {
+    try {
+      const res = await fetch("/api/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(eventData),
+      });
+      if (res.ok) {
+        const newItem = await res.json();
+        setEvents((prev) => [newItem, ...prev]);
+        showToast(`Kegiatan "${newItem.title}" berhasil dibuat!`, "success");
+        return;
+      }
+    } catch (e) {
+      console.warn("API Add Event error:", e);
+    }
   };
 
-  const updateEvent = (id: string, eventData: Partial<EventItem>) => {
-    const updated = events.map((e) => (e.id === id ? { ...e, ...eventData } : e));
-    setEvents(updated);
-    saveLocal("oskar_events_v2", updated);
-    showToast("Data kegiatan berhasil diperbarui!", "success");
+  const updateEvent = async (id: string, eventData: Partial<EventItem>) => {
+    try {
+      const res = await fetch("/api/events", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, ...eventData }),
+      });
+      if (res.ok) {
+        const updatedItem = await res.json();
+        setEvents((prev) => prev.map((e) => (e.id === id ? updatedItem : e)));
+        showToast("Data kegiatan berhasil diperbarui!", "success");
+        return;
+      }
+    } catch (e) {
+      console.warn("API Update Event error:", e);
+    }
   };
 
-  const deleteEvent = (id: string) => {
-    const updated = events.filter((e) => e.id !== id);
-    setEvents(updated);
-    saveLocal("oskar_events_v2", updated);
-    showToast("Kegiatan telah dihapus.", "info");
+  const deleteEvent = async (id: string) => {
+    try {
+      const res = await fetch(`/api/events?id=${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setEvents((prev) => prev.filter((e) => e.id !== id));
+        showToast("Kegiatan telah dihapus.", "info");
+        return;
+      }
+    } catch (e) {
+      console.warn("API Delete Event error:", e);
+    }
   };
 
   // News Actions
-  const addNews = (newsData: Omit<NewsItem, "id">) => {
-    const newItem: NewsItem = { ...newsData, id: "n-" + Date.now() };
-    const updated = [newItem, ...news];
-    setNews(updated);
-    saveLocal("oskar_news_v2", updated);
-    showToast("Artikel/Berita baru berhasil diterbitkan!", "success");
+  const addNews = async (newsData: Omit<NewsItem, "id">) => {
+    try {
+      const res = await fetch("/api/news", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newsData),
+      });
+      if (res.ok) {
+        const newItem = await res.json();
+        setNews((prev) => [newItem, ...prev]);
+        showToast("Artikel/Berita baru berhasil diterbitkan!", "success");
+        return;
+      }
+    } catch (e) {
+      console.warn("API Add News error:", e);
+    }
   };
 
-  const updateNews = (id: string, newsData: Partial<NewsItem>) => {
-    const updated = news.map((n) => (n.id === id ? { ...n, ...newsData } : n));
-    setNews(updated);
-    saveLocal("oskar_news_v2", updated);
-    showToast("Artikel berhasil diperbarui!", "success");
+  const updateNews = async (id: string, newsData: Partial<NewsItem>) => {
+    try {
+      const res = await fetch("/api/news", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, ...newsData }),
+      });
+      if (res.ok) {
+        const updatedItem = await res.json();
+        setNews((prev) => prev.map((n) => (n.id === id ? updatedItem : n)));
+        showToast("Artikel berhasil diperbarui!", "success");
+        return;
+      }
+    } catch (e) {
+      console.warn("API Update News error:", e);
+    }
   };
 
-  const deleteNews = (id: string) => {
-    const updated = news.filter((n) => n.id !== id);
-    setNews(updated);
-    saveLocal("oskar_news_v2", updated);
-    showToast("Artikel berita telah dihapus.", "info");
+  const deleteNews = async (id: string) => {
+    try {
+      const res = await fetch(`/api/news?id=${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setNews((prev) => prev.filter((n) => n.id !== id));
+        showToast("Artikel berita telah dihapus.", "info");
+        return;
+      }
+    } catch (e) {
+      console.warn("API Delete News error:", e);
+    }
   };
 
   // Settings
-  const toggleRegistration = (open: boolean) => {
-    const updated = { ...settings, registrationOpen: open };
-    setSettings(updated);
-    saveLocal("oskar_settings_v2", updated);
+  const toggleRegistration = async (open: boolean) => {
+    await updateSettings({ registrationOpen: open });
     showToast(`Status Pendaftaran Anggota resmi ${open ? "DIBUKA" : "DITUTUP"}.`, "info");
   };
 
-  const updateSettings = (newSettings: Partial<SystemSettings>) => {
-    const updated = { ...settings, ...newSettings };
-    setSettings(updated);
-    saveLocal("oskar_settings_v2", updated);
-    showToast("Pengaturan sistem berhasil diperbarui!", "success");
+  const updateSettings = async (newSettings: Partial<SystemSettings>) => {
+    try {
+      const updated = { ...settings, ...newSettings };
+      setSettings(updated);
+      await fetch("/api/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newSettings),
+      });
+      showToast("Pengaturan sistem berhasil diperbarui!", "success");
+    } catch (e) {
+      console.warn("API Update Settings error:", e);
+    }
   };
 
   return (

@@ -27,8 +27,14 @@ OSKAR/
 │   └── dev.db                  # Database SQLite (Development & Production)
 ├── src/
 │   ├── app/                    # Next.js 14 App Router Page Routes & API
-│   │   ├── api/                # API Server Endpoints Real-Time
-│   │   │   └── messages/       # API CRUD Pesan Masuk Publik (/api/messages)
+│   │   ├── api/                # API Server Endpoints Real-Time (SQLite DB Integration)
+│   │   │   ├── applications/   # API CRUD Pendaftaran Anggota Online
+│   │   │   ├── events/         # API CRUD Kegiatan & Dokumentasi
+│   │   │   ├── members/        # API CRUD Data Anggota Aktif & BPH
+│   │   │   ├── messages/       # API CRUD Pesan Masuk Publik
+│   │   │   ├── news/           # API CRUD Berita & Artikel
+│   │   │   ├── settings/       # API CRUD Pengaturan Sistem & Kontak
+│   │   │   └── umkm/           # API CRUD Katalog UMKM Dusun
 │   │   ├── admin/              # Panel Dashboard Admin (/admin)
 │   │   │   ├── anggota/        # Kelola Anggota & Filter (Gender, RT 1-3)
 │   │   │   ├── berita/         # Kelola Berita & Upload Gambar (Auto Kompres)
@@ -116,15 +122,13 @@ Seluruh data aplikasi menggunakan **SQLite Database (`prisma/dev.db`)** yang rin
 
 ## 📸 Penjelasan Lokasi Penyimpanan File Foto
 
-1. **Modul Lokal / Browser (Dev Mode):**
-   - Saat foto di-upload (profil anggota, preview kegiatan, thumbnail berita), sistem menjalankan **Canvas Image Compression** (`src/lib/image-compress.ts`) secara otomatis di browser.
-   - Ukuran file dikompres menjadi Data URL (`data:image/jpeg;base64,...`) yang sangat ringan dan disimpan langsung ke **Browser LocalStorage** (`oskar_members_v2`, `oskar_events_v2`, `oskar_news_v2`).
+1. **Persistensi Database SQLite Real-Time:**
+   - Seluruh data (Pendaftaran Anggota, Anggota Aktif, UMKM, Kegiatan, Berita, Pengaturan, dan Pesan Masuk) dikelola melalui API endpoints server Next.js di `/api/*`.
+   - Data tersimpan secara terpusat pada file **SQLite Database (`prisma/dev.db`)**. Perubahan di satu browser/perangkat akan otomatis tersinkronisasi dan tampil di semua browser/perangkat lain.
+   - Gambar dikompresi otomatis via HTML Canvas Compression (`src/lib/image-compress.ts`) sebelum disimpan.
 
 2. **Foto Dokumentasi Resolusi Tinggi (Google Drive):**
    - Untuk foto-foto kegiatan resolusi tinggi (album lengkap acara), disimpan pada **Folder Google Drive OSKAR** yang link-nya diinput oleh admin. Hal ini menjaga agar server hosting tidak penuh.
-
-3. **Skema Penyimpanan Production Server (`https://oskar.my.id`):**
-   - File foto disimpan pada folder server `/public/uploads/` atau cloud storage ringan (misal Vercel Blob / Cloudinary) dan URL-nya disimpan di database SQLite.
 
 ---
 
@@ -132,11 +136,10 @@ Seluruh data aplikasi menggunakan **SQLite Database (`prisma/dev.db`)** yang rin
 
 ```bash
 # 1. Install dependensi
-npm install --no-bin-links
+npm install
 
 # 2. Inisialisasi Database SQLite Prisma
-npx prisma generate
-npx prisma db push
+npm run db:push
 
 # 3. Jalankan server pengembang Next.js
 npm run dev
@@ -160,9 +163,8 @@ git clone <repository-url> /var/www/oskar
 cd /var/www/oskar
 
 # Install dependensi & build
-npm install --no-bin-links
-npx prisma generate
-npx prisma db push
+npm install
+npm run db:push
 npm run build
 
 # Jalankan dengan PM2 Process Manager
