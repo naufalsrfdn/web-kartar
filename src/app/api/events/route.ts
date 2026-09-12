@@ -1,34 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { initialEvents } from "@/lib/mock-data";
-
-async function ensureEventsSeeded() {
-  try {
-    const count = await prisma.event.count();
-    if (count === 0) {
-      for (const e of initialEvents) {
-        await prisma.event.create({
-          data: {
-            id: e.id,
-            title: e.title,
-            date: e.date,
-            location: e.location,
-            description: e.description,
-            category: e.category,
-            previewPhotos: JSON.stringify(e.previewPhotos || []),
-            gdriveUrl: e.gdriveUrl,
-          },
-        });
-      }
-    }
-  } catch (err) {
-    console.warn("Event seed note:", err);
-  }
-}
 
 export async function GET() {
   try {
-    await ensureEventsSeeded();
     const events = await prisma.event.findMany({
       orderBy: { date: "desc" },
     });

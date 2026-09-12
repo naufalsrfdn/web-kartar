@@ -1,36 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { initialApplications } from "@/lib/mock-data";
-
-async function ensureApplicationsSeeded() {
-  try {
-    const count = await prisma.memberApplication.count();
-    if (count === 0) {
-      for (const app of initialApplications) {
-        await prisma.memberApplication.create({
-          data: {
-            id: app.id,
-            fullName: app.fullName,
-            gender: app.gender,
-            pob: app.pob,
-            dob: app.dob,
-            whatsapp: app.whatsapp,
-            rt: app.rt,
-            photoUrl: app.photoUrl,
-            status: app.status,
-            createdAt: app.createdAt ? new Date(app.createdAt) : new Date(),
-          },
-        });
-      }
-    }
-  } catch (err) {
-    console.warn("Application seed note:", err);
-  }
-}
 
 export async function GET() {
   try {
-    await ensureApplicationsSeeded();
     const apps = await prisma.memberApplication.findMany({
       orderBy: { createdAt: "desc" },
     });

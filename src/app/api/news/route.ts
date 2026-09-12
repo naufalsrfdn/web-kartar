@@ -1,33 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { initialNews } from "@/lib/mock-data";
-
-async function ensureNewsSeeded() {
-  try {
-    const count = await prisma.news.count();
-    if (count === 0) {
-      for (const n of initialNews) {
-        await prisma.news.create({
-          data: {
-            id: n.id,
-            title: n.title,
-            slug: n.slug,
-            thumbnail: n.thumbnail,
-            content: n.content,
-            date: n.date,
-            category: n.category,
-          },
-        });
-      }
-    }
-  } catch (err) {
-    console.warn("News seed note:", err);
-  }
-}
 
 export async function GET() {
   try {
-    await ensureNewsSeeded();
     const articles = await prisma.news.findMany({
       orderBy: { date: "desc" },
     });

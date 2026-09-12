@@ -1,34 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { initialUmkm } from "@/lib/mock-data";
-
-async function ensureUmkmSeeded() {
-  try {
-    const count = await prisma.umkm.count();
-    if (count === 0) {
-      for (const u of initialUmkm) {
-        await prisma.umkm.create({
-          data: {
-            id: u.id,
-            name: u.name,
-            owner: u.owner,
-            whatsapp: u.whatsapp,
-            description: u.description,
-            priceRange: u.priceRange,
-            location: u.location,
-            imageUrl: u.imageUrl,
-          },
-        });
-      }
-    }
-  } catch (err) {
-    console.warn("UMKM seed note:", err);
-  }
-}
 
 export async function GET() {
   try {
-    await ensureUmkmSeeded();
     const items = await prisma.umkm.findMany({
       orderBy: { createdAt: "desc" },
     });

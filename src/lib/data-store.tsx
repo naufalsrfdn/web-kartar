@@ -87,13 +87,13 @@ interface OskarContextType {
 const OskarContext = createContext<OskarContextType | undefined>(undefined);
 
 export const OskarProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [members, setMembers] = useState<Member[]>(initialMembers);
-  const [applications, setApplications] = useState<MemberApplication[]>(initialApplications);
-  const [leadership] = useState<Leadership[]>(initialLeadership);
-  const [umkm, setUmkm] = useState<UmkmItem[]>(initialUmkm);
-  const [events, setEvents] = useState<EventItem[]>(initialEvents);
-  const [news, setNews] = useState<NewsItem[]>(initialNews);
-  const [messages, setMessages] = useState<ContactMessage[]>(initialMessages);
+  const [members, setMembers] = useState<Member[]>([]);
+  const [applications, setApplications] = useState<MemberApplication[]>([]);
+  const [leadership] = useState<Leadership[]>([]);
+  const [umkm, setUmkm] = useState<UmkmItem[]>([]);
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [news, setNews] = useState<NewsItem[]>([]);
+  const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [settings, setSettings] = useState<SystemSettings>(initialSettings);
 
   const [adminPassword, setAdminPassword] = useState<string>("artapagedev");
@@ -114,19 +114,19 @@ export const OskarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           fetch("/api/settings").then((r) => r.json()),
         ]);
 
-      if (resMembers.status === "fulfilled" && Array.isArray(resMembers.value) && resMembers.value.length > 0) {
+      if (resMembers.status === "fulfilled" && Array.isArray(resMembers.value)) {
         setMembers(resMembers.value);
       }
-      if (resApps.status === "fulfilled" && Array.isArray(resApps.value) && resApps.value.length > 0) {
+      if (resApps.status === "fulfilled" && Array.isArray(resApps.value)) {
         setApplications(resApps.value);
       }
-      if (resUmkm.status === "fulfilled" && Array.isArray(resUmkm.value) && resUmkm.value.length > 0) {
+      if (resUmkm.status === "fulfilled" && Array.isArray(resUmkm.value)) {
         setUmkm(resUmkm.value);
       }
-      if (resEvents.status === "fulfilled" && Array.isArray(resEvents.value) && resEvents.value.length > 0) {
+      if (resEvents.status === "fulfilled" && Array.isArray(resEvents.value)) {
         setEvents(resEvents.value);
       }
-      if (resNews.status === "fulfilled" && Array.isArray(resNews.value) && resNews.value.length > 0) {
+      if (resNews.status === "fulfilled" && Array.isArray(resNews.value)) {
         setNews(resNews.value);
       }
       if (resMsgs.status === "fulfilled" && Array.isArray(resMsgs.value)) {
