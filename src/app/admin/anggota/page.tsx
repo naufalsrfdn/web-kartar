@@ -22,7 +22,6 @@ export default function AdminAnggotaPage() {
   const [formData, setFormData] = useState({
     fullName: "",
     gender: "Laki-laki" as "Laki-laki" | "Perempuan",
-    pob: "",
     dob: "",
     whatsapp: "",
     rt: "RT 1" as "RT 1" | "RT 2" | "RT 3",
@@ -59,7 +58,6 @@ export default function AdminAnggotaPage() {
     setFormData({
       fullName: "",
       gender: "Laki-laki",
-      pob: "Bantul",
       dob: "2002-01-01",
       whatsapp: "083843418369",
       rt: "RT 1",
@@ -91,7 +89,6 @@ export default function AdminAnggotaPage() {
     setFormData({
       fullName: member.fullName,
       gender: member.gender || "Laki-laki",
-      pob: member.pob,
       dob: member.dob,
       whatsapp: member.whatsapp,
       rt: member.rt as "RT 1" | "RT 2" | "RT 3",
@@ -120,7 +117,6 @@ export default function AdminAnggotaPage() {
     const payload = {
       fullName: formData.fullName,
       gender: formData.gender,
-      pob: formData.pob,
       dob: formData.dob,
       whatsapp: formData.whatsapp,
       rt: formData.rt,
@@ -349,16 +345,6 @@ export default function AdminAnggotaPage() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="text-xs font-black text-oskar-dark uppercase">Tempat Lahir</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.pob}
-                      onChange={(e) => setFormData({ ...formData, pob: e.target.value })}
-                      className="neo-input text-xs"
-                    />
-                  </div>
-                  <div className="space-y-1">
                     <label className="text-xs font-black text-oskar-dark uppercase">Tanggal Lahir</label>
                     <input
                       type="date"
@@ -368,17 +354,16 @@ export default function AdminAnggotaPage() {
                       className="neo-input text-xs"
                     />
                   </div>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-black text-oskar-dark uppercase">Nomor WhatsApp</label>
-                  <input
-                    type="tel"
-                    required
-                    value={formData.whatsapp}
-                    onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                    className="neo-input text-xs"
-                  />
+                  <div className="space-y-1">
+                    <label className="text-xs font-black text-oskar-dark uppercase">Nomor WhatsApp</label>
+                    <input
+                      type="tel"
+                      required
+                      value={formData.whatsapp}
+                      onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+                      className="neo-input text-xs"
+                    />
+                  </div>
                 </div>
 
                 {/* JABATAN BPH DROPDOWN */}

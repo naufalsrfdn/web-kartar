@@ -88,9 +88,9 @@ export default function AdminPendaftaranPage() {
 
                       <div className="p-3 bg-amber-50 rounded-xl border border-oskar-dark text-xs space-y-1.5 font-medium">
                         <div className="flex justify-between">
-                          <span className="text-slate-500">Tempat, Tgl Lahir:</span>
+                          <span className="text-slate-500">Tanggal Lahir:</span>
                           <span className="font-bold text-oskar-dark">
-                            {item.pob}, {formatDate(item.dob)}
+                            {formatDate(item.dob)}
                           </span>
                         </div>
                         <div className="flex justify-between items-center">

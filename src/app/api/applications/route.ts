@@ -16,7 +16,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { fullName, gender, pob, dob, whatsapp, rt, photoUrl } = body;
+    const { fullName, gender, dob, whatsapp, rt, photoUrl } = body;
 
     if (!fullName || !whatsapp || !rt) {
       return NextResponse.json({ error: "Data wajib tidak lengkap" }, { status: 400 });
@@ -26,7 +26,6 @@ export async function POST(request: Request) {
       data: {
         fullName,
         gender: gender || "Laki-laki",
-        pob: pob || "",
         dob: dob || "",
         whatsapp,
         rt,
@@ -67,7 +66,6 @@ export async function PATCH(request: Request) {
           data: {
             fullName: updatedApp.fullName,
             gender: updatedApp.gender,
-            pob: updatedApp.pob,
             dob: updatedApp.dob,
             whatsapp: updatedApp.whatsapp,
             rt: updatedApp.rt,

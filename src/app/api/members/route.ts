@@ -16,7 +16,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { fullName, gender, pob, dob, whatsapp, rt, photoUrl, roleTitle, isApproved } = body;
+    const { fullName, gender, dob, whatsapp, rt, photoUrl, roleTitle, isApproved } = body;
 
     if (!fullName || !whatsapp) {
       return NextResponse.json({ error: "Nama dan WhatsApp wajib diisi" }, { status: 400 });
@@ -26,7 +26,6 @@ export async function POST(request: Request) {
       data: {
         fullName,
         gender: gender || "Laki-laki",
-        pob: pob || "",
         dob: dob || "",
         whatsapp,
         rt: rt || "RT 1",

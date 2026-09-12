@@ -14,7 +14,6 @@ export default function PendaftaranPage() {
   const [formData, setFormData] = useState({
     fullName: "",
     gender: "Laki-laki" as "Laki-laki" | "Perempuan",
-    pob: "",
     dob: "",
     whatsapp: "",
     rt: "RT 1" as "RT 1" | "RT 2" | "RT 3",
@@ -41,7 +40,7 @@ export default function PendaftaranPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.fullName || !formData.whatsapp || !formData.pob || !formData.dob) {
+    if (!formData.fullName || !formData.whatsapp || !formData.dob) {
       alert("Harap isi seluruh field wajib!");
       return;
     }
@@ -49,7 +48,6 @@ export default function PendaftaranPage() {
     addApplication({
       fullName: formData.fullName,
       gender: formData.gender,
-      pob: formData.pob,
       dob: formData.dob,
       whatsapp: formData.whatsapp,
       rt: formData.rt,
@@ -176,7 +174,7 @@ export default function PendaftaranPage() {
 
             {/* FORM INPUTS */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 sm:col-span-2">
                 <label className="text-xs font-black text-oskar-dark uppercase">
                   Nama Lengkap <span className="text-oskar-red">*</span>
                 </label>
@@ -204,20 +202,6 @@ export default function PendaftaranPage() {
                   <option value="Laki-laki">Laki-laki</option>
                   <option value="Perempuan">Perempuan</option>
                 </select>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-black text-oskar-dark uppercase">
-                  Tempat Lahir <span className="text-oskar-red">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Contoh: Bantul / Sleman"
-                  value={formData.pob}
-                  onChange={(e) => setFormData({ ...formData, pob: e.target.value })}
-                  className="neo-input text-xs sm:text-sm"
-                />
               </div>
 
               <div className="space-y-1.5">

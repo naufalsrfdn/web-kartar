@@ -2,7 +2,6 @@ export interface Member {
   id: string;
   fullName: string;
   gender: "Laki-laki" | "Perempuan";
-  pob: string;
   dob: string;
   whatsapp: string;
   rt: "RT 1" | "RT 2" | "RT 3";
@@ -16,7 +15,6 @@ export interface MemberApplication {
   id: string;
   fullName: string;
   gender: "Laki-laki" | "Perempuan";
-  pob: string;
   dob: string;
   whatsapp: string;
   rt: "RT 1" | "RT 2" | "RT 3";

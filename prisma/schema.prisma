@@ -22,7 +22,6 @@ model Member {
   id          String   @id @default(uuid())
   fullName    String
   gender      String   @default("Laki-laki")
-  pob         String
   dob         String
   whatsapp    String
   rt          String
@@ -37,7 +36,6 @@ model MemberApplication {
   id        String   @id @default(uuid())
   fullName  String
   gender    String   @default("Laki-laki")
-  pob       String
   dob       String
   whatsapp  String
   rt        String
