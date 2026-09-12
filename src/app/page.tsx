@@ -27,8 +27,12 @@ export default function HomePage() {
   const totalEvents = events.length;
   const totalUmkm = umkm.length;
 
-  const upcomingEvent = events[0];
-  const recentEvents = events.slice(0, 3);
+  const sortedEvents = [...events].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
+
+  const upcomingEvent = sortedEvents[0];
+  const recentEvents = sortedEvents.slice(0, 3);
   const latestNews = news.slice(0, 2);
   const featuredUmkm = umkm.slice(0, 3);
 

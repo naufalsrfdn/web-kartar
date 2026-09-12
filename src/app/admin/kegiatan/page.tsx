@@ -12,6 +12,9 @@ import { compressImage } from "@/lib/image-compress";
 
 export default function AdminKegiatanPage() {
   const { events, addEvent, updateEvent, deleteEvent } = useOskar();
+  const sortedEvents = [...events].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
   const [isOpen, setIsOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<EventItem | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<EventItem | null>(null);
@@ -138,7 +141,7 @@ export default function AdminKegiatanPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 font-medium">
-                {events.map((e) => (
+                {sortedEvents.map((e) => (
                   <tr key={e.id} className="hover:bg-slate-50">
                     <td className="p-3.5 text-slate-600 whitespace-nowrap">{formatDate(e.date)}</td>
                     <td className="p-3.5 font-bold text-oskar-dark">{e.title}</td>

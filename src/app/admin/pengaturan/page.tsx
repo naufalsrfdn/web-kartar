@@ -3,10 +3,12 @@
 import React, { useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useOskar } from "@/lib/data-store";
-import { ToggleLeft, ToggleRight, Save, KeyRound, Eye, EyeOff, ShieldCheck } from "lucide-react";
+import { ConfirmModal } from "@/components/ConfirmModal";
+import { ToggleLeft, ToggleRight, Save, KeyRound, Eye, EyeOff, ShieldCheck, RotateCcw, AlertTriangle } from "lucide-react";
 
 export default function AdminPengaturanPage() {
-  const { settings, toggleRegistration, updateSettings, changeAdminPassword } = useOskar();
+  const { settings, toggleRegistration, updateSettings, changeAdminPassword, resetDatabase } = useOskar();
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const [formData, setFormData] = useState({
     secretariatAddress: settings.secretariatAddress,
@@ -283,6 +285,42 @@ export default function AdminPengaturanPage() {
             </div>
           </form>
         </div>
+
+        {/* RESET DATABASE CARD */}
+        <div className="neo-card p-6 bg-rose-50 border-2 border-oskar-dark space-y-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <span className="neo-badge bg-oskar-red text-white">ZONE BAHAYA</span>
+              <h2 className="text-xl font-black text-oskar-dark flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-oskar-red" />
+                <span>Reset Database ke Data Default</span>
+              </h2>
+              <p className="text-xs font-medium text-slate-600">
+                Kembalikan seluruh data kegiatan, berita, anggota, dan UMKM ke kondisi awal (default mock data). Password admin akan tetap <code>artapagedev</code>.
+              </p>
+            </div>
+
+            <button
+              onClick={() => setShowResetConfirm(true)}
+              className="neo-btn bg-oskar-red hover:bg-rose-700 text-white text-xs py-3 px-5 flex items-center gap-2 shrink-0"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>Reset Database</span>
+            </button>
+          </div>
+        </div>
+
+        <ConfirmModal
+          isOpen={showResetConfirm}
+          title="Konfirmasi Reset Database"
+          message="Apakah Anda yakin ingin menghapus data kustom dan mengembalikan database ke data awal? Password admin akan tetap artapagedev."
+          confirmText="Ya, Reset Database"
+          onConfirm={async () => {
+            setShowResetConfirm(false);
+            await resetDatabase();
+          }}
+          onCancel={() => setShowResetConfirm(false)}
+        />
       </div>
     </AdminLayout>
   );

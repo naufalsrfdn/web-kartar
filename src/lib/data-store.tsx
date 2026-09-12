@@ -78,9 +78,10 @@ interface OskarContextType {
   updateNews: (id: string, newsData: Partial<NewsItem>) => Promise<void>;
   deleteNews: (id: string) => Promise<void>;
 
-  // Settings
+  // Settings & System
   toggleRegistration: (open: boolean) => Promise<void>;
   updateSettings: (newSettings: Partial<SystemSettings>) => Promise<void>;
+  resetDatabase: () => Promise<void>;
 }
 
 const OskarContext = createContext<OskarContextType | undefined>(undefined);
@@ -521,6 +522,22 @@ export const OskarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  const resetDatabase = async () => {
+    try {
+      const res = await fetch("/api/reset", { method: "POST" });
+      if (res.ok) {
+        localStorage.removeItem("oskar_admin_password");
+        setAdminPassword("artapagedev");
+        await refreshAllData();
+        showToast("Database berhasil di-reset ke data awal! Password admin: artapagedev", "success");
+        return;
+      }
+    } catch (e) {
+      console.warn("API Reset Database error:", e);
+    }
+    showToast("Gagal me-reset database.", "error");
+  };
+
   return (
     <OskarContext.Provider
       value={{
@@ -559,6 +576,7 @@ export const OskarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         deleteNews,
         toggleRegistration,
         updateSettings,
+        resetDatabase,
       }}
     >
       {children}

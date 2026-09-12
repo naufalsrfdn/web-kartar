@@ -30,7 +30,7 @@ export async function GET() {
   try {
     await ensureEventsSeeded();
     const events = await prisma.event.findMany({
-      orderBy: { createdAt: "desc" },
+      orderBy: { date: "desc" },
     });
     
     // Parse previewPhotos back to string[] for frontend consumption
